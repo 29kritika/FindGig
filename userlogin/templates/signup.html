@@ -1,0 +1,21 @@
+<html>
+<head>
+    <title> Registration </title>
+</head>
+<body>
+    <h2>Sign up</h2>
+    <br>
+    <b>
+        For bands and artists, name field would require your band name or stage name<br>
+        For organisers, the name field would require your organisation's name<br>
+    </b>
+    <br>
+    Please Note: bands will be provided an option add links to each member's profile while setting up the profile page.
+    <br>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Complete registration</button>
+    </form>
+</body>
+</html>

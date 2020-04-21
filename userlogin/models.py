@@ -1,13 +1,17 @@
 from djongo import models
 
 # Create your models here.
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User as djangoUser
 
 
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, unique=True, null=False, db_index=True)
-    type = models.TextField(max_length=500, blank=True)
-
+class User(models.Model):
+    user = models.OneToOneField(djangoUser, on_delete=models.CASCADE, unique=True, null=False, db_index=True)
+    type = models.TextField(max_length=500, choices=(('artist', 'Artist'), ('organiser', 'Organiser'), ('band', 'Band')),
+                            default='artist')
+    username = models.CharField(unique=True, max_length=255)
+    name = models.CharField(max_length=255)
+    about = models.CharField(max_length=500, default='')
+    USERNAME_FIELD = 'username'
 
 # class Song(models.Model):
 #     id = models.TextField(max_length=10, unique=True, null=False, db_index=True)

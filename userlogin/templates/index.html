@@ -13,8 +13,7 @@
   <div class="jumbotron">
     <h1>FindGig :p</h1>
     {% if user.is_authenticated %}
-      <p>Logged as {{ user.username }}</p>
-      <a class="btn btn-primary" href="{% url 'logout' %}">Sign Out</a>
+      <meta http-equiv="refresh" content="0; {% url 'Home' %}">
     {% else %}
       <a class="btn btn-primary" href="{% url 'social:begin' 'google-oauth2' %}">
         Sign in with Google
