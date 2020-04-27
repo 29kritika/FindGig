@@ -10,7 +10,10 @@ class User(models.Model):
                             default='artist')
     username = models.CharField(unique=True, max_length=255)
     name = models.CharField(max_length=255)
-    about = models.CharField(max_length=500, default='')
+    about_text = models.CharField(max_length=500, default='')
+    about_link = models.CharField(max_length=50, default='-')
+    gender = models.CharField(max_length=20, default='Not specified', choices=(('female', 'Female'), ('male', 'Male'), ('other', 'Other'), ('not specified', 'Not specified')))
+    city = models.CharField(max_length=50, default='')
     USERNAME_FIELD = 'username'
 
 # class Song(models.Model):
@@ -22,3 +25,11 @@ class User(models.Model):
 # class Relation(models.Model):
 #     singer = models.ForeignKey(Profile, on_delete=models.CASCADE)
 #     song_sang = models.ForeignKey(Song, on_delete=models.CASCADE)
+#
+# class Timeline(models.Model):
+#     from_t = models.ForeignKey(User, on_delete=models.CASCADE, related_name="from_t1")
+#     to_t = models.ForeignKey(User, on_delete=models.CASCADE, related_name="to_t2")
+#     post = models.CharField(max_length=2500)
+#     datetime = models.DateTimeField(auto_now=True)
+#     privacy = models.BooleanField(default=False)
+#     selfp = models.BooleanField(default=True)
