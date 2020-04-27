@@ -4,15 +4,7 @@ from .forms import CustomUserCreationForm
 from django.views.generic import CreateView
 
 
-# _______________________Classes___________________________
-
-
-class SignUpView(CreateView):
-    form_class = CustomUserCreationForm
-    success_url = '/home/'
-
-    def __init__(self):
-        self.template_name = 'signup.html'
+# _______________________Classes__________________________
 
 
 # ____________________Functions____________________________
@@ -23,9 +15,9 @@ def index(request):
 
 
 def homePage(request):
-    socialUserID = request.user.id
+    socialUser = request.user
     try:
-        user = User.objects.get(id=socialUserID)
+        user = User.objects.get(user=socialUser)
         args = {'user': user, }
         if user.type == 'artist':
             return render(request, 'artist-home.html', args)
@@ -34,3 +26,23 @@ def homePage(request):
         return render(request, 'organiser-home.html', args)
     except:
         return redirect('Signup')
+
+
+def signUp(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            User.objects.update_or_create(
+                user=request.user,
+                type=user.type,
+                username=user.username,
+                name=user.name
+            )
+            return redirect('/')
+        else:
+            print("why dude")
+    else:
+        form = CustomUserCreationForm
+    arg = {'form': form}
+    return render(request, 'signup.html', arg)

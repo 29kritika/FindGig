@@ -23,7 +23,7 @@ from django.contrib.auth.views import LogoutView
 urlpatterns = [
     url('', include('social_django.urls', namespace='social')),
     path('home/', views.homePage, name='Home'),
-    path('signup/', views.SignUpView.as_view(), name='Signup'),
+    path('signup/', views.signUp, name='Signup'),
     path('logout/', LogoutView.as_view(), {'next_page': settings.LOGOUT_REDIRECT_URL},name='logout'),
     path('', views.index),
 ]
