@@ -54,6 +54,7 @@ def signUp(request):
     arg = {'form': form}
     return render(request, 'signup.html', arg)
 
+
 def asettings(request):
     socialUser = request.user
     user = User.objects.get(user=socialUser)
@@ -77,7 +78,7 @@ def change_bio(request):
     else:
         form = Bio()
     arg = {'form': form,}
-    return render(request, 'change_bio.html', arg)
+    return render(request, 'change_info.html', arg)
 
 
 def change_name(request):
@@ -95,7 +96,7 @@ def change_name(request):
     else:
         form = Name()
     arg = {'form': form, }
-    return render(request, 'change_name.html', arg)
+    return render(request, 'change_info.html', arg)
 
 
 def change_city(request):
@@ -113,7 +114,7 @@ def change_city(request):
     else:
         form = City()
     arg = {'form': form, }
-    return render(request, 'change_city.html', arg)
+    return render(request, 'change_info.html', arg)
 
 def change_gender(request):
     socialUser = request.user
@@ -130,4 +131,4 @@ def change_gender(request):
     else:
         form = Gender()
     arg = {'form': form, }
-    return render(request, 'change_city.html', arg)
+    return render(request, 'change_info.html', arg)
