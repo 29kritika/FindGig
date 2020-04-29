@@ -16,6 +16,19 @@ class User(models.Model):
     city = models.CharField(max_length=50, default='')
     USERNAME_FIELD = 'username'
 
+
+class Event(models.Model):
+    organiser = models.ForeignKey(User, on_delete=models.PROTECT, related_name="Organiser")
+    title = models.CharField(max_length=50)
+    description = models.CharField(max_length=2500)
+    venue = models.CharField(max_length=100)
+    date = models.DateField()
+    startTime = models.TimeField()
+    endTime = models.TimeField()
+    performer = models.ForeignKey(User, on_delete=models.PROTECT, related_name="Performer")
+    # dateTime = models.DateTimeField(auto_now=True) not able to get this value
+
+
 # class Song(models.Model):
 #     id = models.TextField(max_length=10, unique=True, null=False, db_index=True)
 #     name = models.TextField(max_length=200, null=False)

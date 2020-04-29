@@ -5,6 +5,14 @@
 <body>
     <h1> Organiser </h1>
     Welcome, {{user.name}}!
+    <br>
+    <a href="{% url 'create-event' %}">Create an Event</a><br>
+    <hr>
+    <br>
+    Your events: <br>
+    {%for i in events %}
+        <a href="{% url 'event-page' %}{{i.id}}">{{i.title}}</a>
+    {% endfor %}
     <br> <hr> <br>
     <a href="{% url 'logout' %}">Sign Out</a>
 </body>

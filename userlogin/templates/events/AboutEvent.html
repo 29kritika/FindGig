@@ -1,0 +1,18 @@
+<html>
+<head>
+    <title>Event</title>
+</head>
+<body>
+    <h1>{{event.title}}</h1>
+    description: {{event.description}}
+    <br>
+    <br>
+    venue: {{event.venue}}<br>
+    date: {{event.date}}<br>
+    from: {{event.startTime}} to {{event.endTime}}<br>
+    event created on : {{event.datetime}}<br>
+    <br> <hr> <br>
+    <a href="{% url 'Home' %}">Home</a>
+    <a href="{% url 'logout' %}">Sign Out</a>
+</body>
+</html>

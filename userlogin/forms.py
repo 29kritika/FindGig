@@ -1,5 +1,5 @@
 from django.contrib.auth.forms import UserCreationForm
-from .models import User
+from .models import User, Event
 from django import forms
 
 
@@ -37,3 +37,9 @@ class Gender(forms.ModelForm):
         widgets = {
             'type': forms.RadioSelect()
         }
+
+
+class EventCreationForm(forms.ModelForm):
+    class Meta:
+        model = Event
+        fields = ('title', 'description', 'venue', 'date', 'startTime', 'endTime')

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
-from .models import User
-from .forms import CustomUserCreationForm, Bio, Name, City, Gender
+from .models import User, Event
+from .forms import CustomUserCreationForm, Bio, Name, City, Gender, EventCreationForm
 from django.http import Http404
 from django.views.generic import CreateView
 
@@ -21,18 +21,34 @@ def checkArtist(user):
     raise Http404('not allowed ')
 
 
+def checkOrganiser(user):
+    if user.type == 'organiser':
+        return
+    raise Http404('not allowed ')
+
+
 def homePage(request):
     socialUser = request.user
     try:
         user = User.objects.get(user=socialUser)
-        args = {'user': user, }
-        if user.type == 'artist':
-            return render(request, 'artist-home.html', args)
-        if user.type == 'band':
-            return render(request, 'band-home.html', args)
-        return render(request, 'organiser-home.html', args)
     except:
         return redirect('Signup')
+    args = {'user': user, }
+    if user.type == 'artist':
+        return render(request, 'artist-home.html', args)
+    if user.type == 'band':
+        return render(request, 'band-home.html', args)
+    # Find the events organised by this user
+    # send it to the html page in order to display his events temporarily
+    try:
+        events = Event.objects.get(organiser=user)
+        if not isinstance(events, list):
+            events = [events, ]
+        args['events'] = events
+    except:
+        print('something')
+        pass
+    return render(request, 'organiser-home.html', args)
 
 
 def signUp(request):
@@ -116,6 +132,7 @@ def change_city(request):
     arg = {'form': form, }
     return render(request, 'change_info.html', arg)
 
+
 def change_gender(request):
     socialUser = request.user
     user = User.objects.get(user=socialUser)
@@ -132,3 +149,45 @@ def change_gender(request):
         form = Gender()
     arg = {'form': form, }
     return render(request, 'change_info.html', arg)
+
+
+def createEvent(request):
+    socialUser = request.user
+    user = User.objects.get(user=socialUser)
+    checkOrganiser(user)
+    if request.method == 'POST':
+        form = EventCreationForm(request.POST)
+        if form.is_valid():
+            event = form.save(commit=False)
+            Event.objects.update_or_create(
+                organiser=user,
+                title=event.title,
+                description=event.description,
+                venue=event.venue,
+                date=event.date,
+                startTime=event.startTime,
+                endTime=event.endTime
+            )
+            return redirect('Home')
+        else:
+            print("why dude")
+    else:
+        form = EventCreationForm()
+    args = {'form': form, }
+    return render(request, 'organisers/createEvent.html', args)
+
+
+def eventPage(request, id):
+    # socialuser = request.user
+    # user = User.objects.get(user=socialuser)
+    # will be editable for organiser (need to add that)
+    try:
+        event = Event.objects.get(id=id)
+        args = {'event': event}
+        return render(request, 'events/AboutEvent.html', args)
+    except:
+        raise Http404('invalid event')
+
+
+def allEvents(request):
+    pass
