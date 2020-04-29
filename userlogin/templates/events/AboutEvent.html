@@ -10,7 +10,14 @@
     venue: {{event.venue}}<br>
     date: {{event.date}}<br>
     from: {{event.startTime}} to {{event.endTime}}<br>
-    event created on : {{event.datetime}}<br>
+
+    {% load embed_video_tags %}
+
+    {% video event.video as my_video %}
+      Backend: {{ my_video.backend }}
+      {% video my_video '800x600' %}
+    {% endvideo %}
+
     <br> <hr> <br>
     <a href="{% url 'Home' %}">Home</a>
     <a href="{% url 'logout' %}">Sign Out</a>

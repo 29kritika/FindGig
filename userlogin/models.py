@@ -1,4 +1,5 @@
 from djongo import models
+from embed_video.fields import EmbedVideoField
 
 # Create your models here.
 from django.contrib.auth.models import User as djangoUser
@@ -26,6 +27,7 @@ class Event(models.Model):
     startTime = models.TimeField()
     endTime = models.TimeField()
     performer = models.ForeignKey(User, on_delete=models.PROTECT, related_name="Performer")
+    video = EmbedVideoField(default='')
     # dateTime = models.DateTimeField(auto_now=True) not able to get this value
 
 

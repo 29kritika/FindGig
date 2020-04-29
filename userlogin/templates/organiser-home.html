@@ -10,7 +10,8 @@
     <hr>
     <br>
     Your events: <br>
-    {%for i in events %}
+    {% for i in events %}
+        {{i.title}}
         <a href="{% url 'event-page' %}{{i.id}}">{{i.title}}</a>
     {% endfor %}
     <br> <hr> <br>

@@ -42,4 +42,4 @@ class Gender(forms.ModelForm):
 class EventCreationForm(forms.ModelForm):
     class Meta:
         model = Event
-        fields = ('title', 'description', 'venue', 'date', 'startTime', 'endTime')
+        fields = ('title', 'description', 'venue', 'date', 'startTime', 'endTime', 'video')

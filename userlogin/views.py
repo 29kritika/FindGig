@@ -3,6 +3,7 @@ from .models import User, Event
 from .forms import CustomUserCreationForm, Bio, Name, City, Gender, EventCreationForm
 from django.http import Http404
 from django.views.generic import CreateView
+from embed_video.backends import detect_backend
 
 
 # _______________________Classes__________________________
@@ -41,9 +42,8 @@ def homePage(request):
     # Find the events organised by this user
     # send it to the html page in order to display his events temporarily
     try:
-        events = Event.objects.get(organiser=user)
-        if not isinstance(events, list):
-            events = [events, ]
+        events = Event.objects.all().filter(organiser=user)
+        print(events)
         args['events'] = events
     except:
         print('something')
@@ -166,7 +166,8 @@ def createEvent(request):
                 venue=event.venue,
                 date=event.date,
                 startTime=event.startTime,
-                endTime=event.endTime
+                endTime=event.endTime,
+                video=event.video,
             )
             return redirect('Home')
         else:
@@ -181,12 +182,10 @@ def eventPage(request, id):
     # socialuser = request.user
     # user = User.objects.get(user=socialuser)
     # will be editable for organiser (need to add that)
-    try:
-        event = Event.objects.get(id=id)
-        args = {'event': event}
-        return render(request, 'events/AboutEvent.html', args)
-    except:
-        raise Http404('invalid event')
+
+    event = Event.objects.get(id=id)
+    args = {'event': event}
+    return render(request, 'events/AboutEvent.html', args)
 
 
 def allEvents(request):
