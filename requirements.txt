@@ -1,3 +1,8 @@
+Make sure you're in a virtual env
+for ubuntu/Mac: pyenv shell
+for Windows: .\FindGig\Scripts\activate
+
+
 Please make sure all of these packages are installed in your virtual env
 
 - django: pip install django
