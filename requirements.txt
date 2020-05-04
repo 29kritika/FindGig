@@ -1,0 +1,8 @@
+Please make sure all of these packages are installed in your virtual env
+
+- django: pip install django
+- djongo: pip install djongo
+- social_auth_app: pip install social-auth-app-django
+- pymongo: pip install pymongo[srv] // pip3 install pymongo[srv]
+- embed-video: pip install django-embed-video
+- crispy-forms(for bootstrap): pip install django-crispy-forms
