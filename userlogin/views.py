@@ -1,7 +1,7 @@
 from django.db.models import Q
 from django.shortcuts import render, redirect
-from .models import User, Event
-from .forms import CustomUserCreationForm, Bio, Name, City, Gender, EventCreationForm
+from .models import User, Event, Post
+from .forms import CustomUserCreationForm, Bio, Name, City, Gender, EventCreationForm, PostCreationForm
 from django.http import Http404
 from django.views.generic import CreateView
 from embed_video.backends import detect_backend
@@ -37,7 +37,24 @@ def homePage(request):
         return redirect('Signup')
     args = {'user': user, }
     if user.type == 'artist':
-        return render(request, 'artist-home.html', args)
+        if request.method == 'POST':
+            form = PostCreationForm(request.POST)
+            if form.is_valid():
+                event = form.save(commit=False)
+                Post.objects.update_or_create(
+                    performer=user,
+                    description=event.description,
+                    video=event.video,
+                )
+                return redirect('Home')
+            else:
+                print("why dude")
+        else:
+            form = PostCreationForm()
+        args['form'] = form
+        posts = Post.objects.all().filter(performer=user)
+        args['posts'] = posts
+        return render(request, 'ip/dashboard.html', args)
     if user.type == 'band':
         return render(request, 'band-home.html', args)
     # Find the events organised by this user
@@ -189,7 +206,6 @@ def eventPage(request, id):
     return render(request, 'events/AboutEvent.html', args)
 
 def search_bands(request):
-
     queryset = []
     query = str(request.POST.get("q", ""))
     queries = query.split(" ")
@@ -210,7 +226,7 @@ def search_bands(request):
             queryset.append(qq)
             print(qq)
 
-    return render(request, 'artists\search-bands.html', {'search_set': list(set(queryset))})
+    return render(request, 'artists/search-bands.html', {'search_set': list(set(queryset))})
 
 def search_artists():
     pass

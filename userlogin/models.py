@@ -31,6 +31,13 @@ class Event(models.Model):
     # dateTime = models.DateTimeField(auto_now=True) not able to get this value
 
 
+class Post(models.Model):
+    dateTime = models.DateTimeField(auto_now=True)
+    description = models.CharField(max_length=2500)
+    performer = models.ForeignKey(User, on_delete=models.PROTECT, related_name='post_user')
+    video = EmbedVideoField(default='')
+
+
 # class Song(models.Model):
 #     id = models.TextField(max_length=10, unique=True, null=False, db_index=True)
 #     name = models.TextField(max_length=200, null=False)
