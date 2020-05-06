@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from .models import User, Event
 from .forms import CustomUserCreationForm, Bio, Name, City, Gender, EventCreationForm
@@ -187,6 +188,38 @@ def eventPage(request, id):
     args = {'event': event}
     return render(request, 'events/AboutEvent.html', args)
 
+def search_bands(request):
+
+    queryset = []
+    query = str(request.POST.get("q", ""))
+    queries = query.split(" ")
+    for q in queries:
+        qe = User.objects.filter(
+           Q(type__icontains = 'Band')
+        )
+        print(qe)
+        qe = qe.filter(
+            Q(username__icontains=q) |
+            Q(name__icontains = q) |
+            Q(about_text__icontains = q) |
+            Q(gender__icontains = q) |
+            Q(city__icontains=q)
+
+        ).distinct()
+        for qq in qe:
+            queryset.append(qq)
+            print(qq)
+
+    return render(request, 'artists\search-bands.html', {'search_set': list(set(queryset))})
+
+def search_artists():
+    pass
+
+def search_events():
+    pass
+
+def search_organisers():
+    pass
 
 def allEvents(request):
     pass
