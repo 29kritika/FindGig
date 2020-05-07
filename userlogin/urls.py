@@ -32,9 +32,9 @@ urlpatterns = [
     path('change-gender/', views.change_gender, name='change-gender'),
     path('change-name/', views.change_name, name='change-name'),
 
-    path('home/search-bands/search-bands.html', views.search_bands, name='search-bands'),
-    path('home/search-bands.html', views.search_bands, name='search-bands'),
-    path('home/search-bands/method="POST"', views.search_bands, name='search-bands1'),
+    # path('home/search-bands/search-bands.html', views.search_bands, name='search-bands'),
+    path('home/search.html', views.search, name='search'),
+    path('home/search/method="POST"', views.search, name='search1'),
 
     path('home/create-event/', views.createEvent, name='create-event'),
     path('events/', views.allEvents, name='event-page'),

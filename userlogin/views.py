@@ -111,7 +111,7 @@ def change_bio(request):
             print("why dude")
     else:
         form = Bio()
-    arg = {'form': form,}
+    arg = {'form': form, }
     return render(request, 'change_info.html', arg)
 
 
@@ -205,20 +205,18 @@ def eventPage(request, id):
     args = {'event': event}
     return render(request, 'events/AboutEvent.html', args)
 
-def search_bands(request):
+
+def search(request):
     queryset = []
     query = str(request.POST.get("q", ""))
     queries = query.split(" ")
     for q in queries:
-        qe = User.objects.filter(
-           Q(type__icontains = 'Band')
-        )
-        print(qe)
+        qe = User.objects.all()
         qe = qe.filter(
             Q(username__icontains=q) |
-            Q(name__icontains = q) |
-            Q(about_text__icontains = q) |
-            Q(gender__icontains = q) |
+            Q(name__icontains=q) |
+            Q(about_text__icontains=q) |
+            Q(gender__icontains=q) |
             Q(city__icontains=q)
 
         ).distinct()
@@ -226,16 +224,24 @@ def search_bands(request):
             queryset.append(qq)
             print(qq)
 
-    return render(request, 'artists/search-bands.html', {'search_set': list(set(queryset))})
+    user = User.objects.get(user=request.user)
+    args = {'search_set': list(set(queryset)), 'user': user}
 
-def search_artists():
-    pass
+    return render(request, 'ip/searchresult.html', args)
+    # return render(request, 'artists/search-bands.html', {'search_set': list(set(queryset))})
 
-def search_events():
-    pass
 
-def search_organisers():
-    pass
+# def search_artists():
+#     pass
+#
+#
+# def search_events():
+#     pass
+#
+#
+# def search_organisers():
+#     pass
+
 
 def allEvents(request):
     pass
