@@ -39,5 +39,7 @@ urlpatterns = [
     path('home/create-event/', views.createEvent, name='create-event'),
     path('events/', views.allEvents, name='event-page'),
     url(r'^events/(?P<id>\d+)', views.eventPage, name='event-desciption'),
+    url('view_profile/(?P<id>\d+)', views.profile, name='view_profile'),
+    url('view_profile/sponsor/(?P<eventid>\d+)', views.sponsor, name='sponsor'),
     path('', views.index),
 ]

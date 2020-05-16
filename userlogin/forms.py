@@ -49,3 +49,9 @@ class PostCreationForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ('description', 'video')
+
+
+# class SponsorForm(forms.Model):
+#     class Meta:
+#         model = Event
+#         fields = ('sponsoramt')

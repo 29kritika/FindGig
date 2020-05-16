@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-
 {% load static %}
+{% load crispy_forms_tags %}
+{% load embed_video_tags %}
 
 <head>
 
@@ -11,18 +12,15 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>New Gigs</title>
+    <title>Dashboard</title>
 
-    <!-- Custom fonts for this template -->
+    <!-- Custom fonts for this template-->
     <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
           rel="stylesheet">
 
-    <!-- Custom styles for this template -->
-    <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
-
-    <!-- Custom styles for this page -->
-    <link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+    <!-- Custom styles for this template-->
+    <link href="{% static 'css/sb-admin-2.css' %}" rel="stylesheet">
 
 </head>
 
@@ -46,8 +44,8 @@
         <hr class="sidebar-divider my-0">
 
         <!-- Nav Item - Dashboard -->
-        <li class="nav-item ">
-            <a class="nav-link" href="{% static 'dashboard.html' %}">
+        <li class="nav-item active">
+            <a class="nav-link" href="">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
                 <span>Dashboard</span></a>
         </li>
@@ -59,19 +57,30 @@
         </li>
 
         <li class="nav-item">
-            <a class="nav-link" href="{% static 'newgigs.html' %}">
+            <a class="nav-link" href="newgigs.html">
                 <i class="fas fa-fw fa-bolt"></i>
                 <span>New Gigs</span></a>
         </li>
 
         <!-- Divider -->
-        <hr class="sidebar-divider mb-0">
+        <hr class="sidebar-divider">
 
-<!--        <li class="nav-item active">-->
-<!--            <a class="nav-link" href="{% static 'searchresult.html' %}">-->
-<!--                <i class="fas fa-fw fa-search"></i>-->
-<!--                <span>Search Results</span></a>-->
-<!--        </li>-->
+
+        <!-- Nav Item - Pages Collapse Menu -->
+        <li class="nav-item">
+            <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true"
+               aria-controls="collapseTwo">
+                <i class="fas fa-fw fa-cog"></i>
+                <span>Settings</span>
+            </a>
+            <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Settings:</h6>
+                    <a class="collapse-item" href="{% url 'change-bio' %}">Update Bio</a>
+                    <a class="collapse-item" href="{% url 'change-name' %}">Update Name</a>
+                </div>
+            </div>
+        </li>
 
         <hr class="sidebar-divider">
 
@@ -136,13 +145,13 @@
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Login Screens:</h6>
-                        <a class="collapse-item" href="login.html">Login</a>
+                        <a class="collapse-item" href="{% static 'login.html' %}">Login</a>
                         <a class="collapse-item" href="{% static 'register.html' %}">Register</a>
-                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
+                        <a class="collapse-item" href="{% static 'forgot-password.html' %}">Forgot Password</a>
                         <div class="collapse-divider"></div>
                         <h6 class="collapse-header">Other Pages:</h6>
                         <a class="collapse-item" href="{% static '404.html' %}">404 Page</a>
-                        <a class="collapse-item" href="{% static 'blank.html' %}">Blank Page</a>
+                        <a class="collapse-item" href="blank.html">Blank Page</a>
                     </div>
                 </div>
             </li>
@@ -191,7 +200,7 @@
                 </button>
 
                 <!-- Topbar Search -->
-                <form action="search.html" method="POST">
+                <form action="search.html"method="POST">
                     {% csrf_token %}
                     <div class="input-group">
                         <input type="text" name="q" class="form-control bg-light border-0 small"
@@ -203,16 +212,18 @@
                         </div>
                     </div>
                 </form>
-                <!--          <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">-->
-                <!--            <div class="input-group">-->
+                <!--                <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">-->
+                <!--                    <div class="input-group">-->
                 <!--              <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">-->
                 <!--              <div class="input-group-append">-->
-                <!--                <button class="btn btn-primary" type="button">-->
-                <!--                  <i class="fas fa-search fa-sm"></i>-->
-                <!--                </button>-->
+                <!--                <a href="{% static 'searchresult.html' %}">-->
+                <!--                  <button class="btn btn-primary" type="button">-->
+                <!--                    <i class="fas fa-search fa-sm"></i>-->
+                <!--                  </button>-->
+                <!--                </a>-->
                 <!--              </div>-->
-                <!--            </div>-->
-                <!--          </form>-->
+                <!--                    </div>-->
+                <!--                </form>-->
 
                 <!-- Topbar Navbar -->
                 <ul class="navbar-nav ml-auto">
@@ -393,8 +404,7 @@
                                               Activity Log
                                             </a> -->
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="{% url 'logout' %}" data-toggle="modal"
-                               data-target="#logoutModal">
+                            <a class="dropdown-item" href="{% url 'logout' %}" data-toggle="modal" data-target="#logoutModal">
                                 <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                 Logout
                             </a>
@@ -406,78 +416,317 @@
             </nav>
             <!-- End of Topbar -->
 
-
             <!-- Begin Page Content -->
             <div class="container-fluid">
 
                 <!-- Page Heading -->
-                <h1 class="h3 mb-2 text-gray-800">SEARCH RESULTS</h1>
-                <!--           <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below. For more information about DataTables, please visit the <a target="_blank" href="https://datatables.net">official DataTables documentation</a>.</p>
-                 -->
-                <!-- DataTales Example -->
-                <div class="card shadow mb-4">
-                    <!--             <div class="card-header py-3">
-                                  <h6 class="m-0 font-weight-bold text-primary">Results</h6>
-                                </div> -->
-                    <div class="card-body">
-                        <div class="table-responsive table-borderless">
-                            <table class="table table-borderless" id="dataTable" width="100%" cellspacing="0">
-                                <thead class="thead-dark">
-                                <tr>
-                                    <th>Results</th>
-                                    <!--                       <th>Date</th>
-                                                          <th>Time</th>
-                                                          <th>Duration</th>
-                                                          <th>How Much <i class="fa fa-inr" aria-hidden="true"></i></th>
-                                                          <th>Link/Know more</th> -->
-                                </tr>
-                                </thead>
-                                <!--                   <tfoot>
-                                                    <tr>
-                                                      <th>Name</th>
-                                                      <th>Position</th>
-                                                      <th>Office</th>
-                                                      <th>Age</th>
-                                                      <th>Start date</th>
-                                                      <th>Salary</th>
-                                                    </tr>
-                                                  </tfoot> -->
-                                <tbody>
-                                {% for element in search_set %}
-                                <tr>
-                                    <td>
-                                        <a href="{% url 'view_profile' id=element.id %}">
-                                            <img class="rounded-circle"
-                                                 src="https://source.unsplash.com/QAB-WJcbgJk/60x60"
-                                                 style="height: 40%"> {{element.username}} {{element.id}}
-                                        </a>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">DASHBOARD</h1>
+                    <!--             <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generate Report</a> -->
+                </div>
+
+                <hr class="mb-5">
+
+
+                <div class="row">
+                    <div class="col-8 mx-auto mb-4">
+
+                        <!-- upload status -->
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary"> Create event </h6>
+                            </div>
+
+                            <div class="card-body">
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    {{form|crispy}}
+                                    <button type="submit">Create</button>
+                                </form>
+                                <!--                  &lt;!&ndash; UPLOAD &ndash;&gt;-->
+                                <!--                  <form method="POST" action="#" enctype="multipart/form-data">-->
+                                <!--                    <div class="form-group mb-0" >-->
+                                <!--                      <input type="text" class="form-control rounded" id="uploadDescription" placeholder="Enter a description...">-->
+                                <!--                    </div>-->
+                                <!--                    &lt;!&ndash; https://codepen.io/Sebus059/pen/MwMQbP &ndash;&gt;-->
+                                <!--                    &lt;!&ndash; COMPONENT START &ndash;&gt;-->
+                                <!--                    <div class="form-group">-->
+                                <!--                      <div class="input-group input-file" name="Fichier1">-->
+                                <!--                          <input type="text" class="form-control" placeholder='Choose a file...' />     -->
+                                <!--                            <span class="input-group-btn">-->
+                                <!--                              <button class="btn btn-default btn-choose" type="button">Choose</button>-->
+                                <!--                            </span>-->
+                                <!--                      </div>-->
+                                <!--                    </div>-->
+                                <!--                    <div class="form-group">-->
+                                <!--                      &lt;!&ndash; Need to add redirect links &ndash;&gt;-->
+                                <!--                      <button type="submit" class="btn btn-primary pull-right">Submit</button> -->
+                                <!--                      <button type="reset" class="btn btn-danger">Reset</button>-->
+                                <!--                    </div>-->
+                                <!--                  </form>-->
+                            </div>
                         </div>
                     </div>
                 </div>
 
-            </div>
-            <!-- /.container-fluid -->
+                <!-- Content Row -->
 
-        </div>
-        <!-- End of Main Content -->
+                <div class="row">
 
-        <!-- Footer -->
-        <footer class="sticky-footer bg-white">
-            <div class="container my-auto">
-                <div class="copyright text-center my-auto">
-                    <span>Copyright &copy; GigFinder 2020</span>
+                    <!-- Area Chart -->
+                    <div class="col-xl-8 col-lg-7">
+                        <div class="card shadow mb-4">
+                            <!-- Card Header - Dropdown -->
+                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0 font-weight-bold text-primary">Upcoming Events</h6>
+
+                                <!-- <div class="dropdown no-arrow">
+                                  <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                                  </a>
+                                  <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                                    <div class="dropdown-header">Dropdown Header:</div>
+                                    <a class="dropdown-item" href="#">Action</a>
+                                    <a class="dropdown-item" href="#">Another action</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#">Something else here</a>
+                                  </div>
+                                </div> -->
+                            </div>
+                            <!-- Card Body -->
+                            <div class="card-body">
+                                {% for event in events %}
+                                        {{event.title}}
+<!--                                        <a href="{% url 'event-page' %}{{event.id}}">{{event.title}}</a>-->
+                                        <br>
+                                        <br>
+
+                                        {% video event.video as my_video %}
+                                        {% video my_video '600x450' %}
+                                        {% endvideo %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pie Chart -->
+                    <div class="col-xl-4 col-lg-5">
+                        <div class="card shadow mb-4">
+                            <!-- Card Header - Dropdown -->
+                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0 font-weight-bold text-primary"><a href="{{ user.about_link }}">{{ user.about_link }}</a></h6>
+                                <!--                  <h6 class="m-0 font-weight-bold text-primary">Revenue Sources</h6>-->
+                                                  <div class="dropdown no-arrow">
+                                                    <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                      <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                                                    </a>
+                                                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                                                      <div class="dropdown-header">Dropdown Header:</div>
+                                                      <a class="dropdown-item" href="#">Action</a>
+                                                      <a class="dropdown-item" href="#">Another action</a>
+                                                      <div class="dropdown-divider"></div>
+                                                      <a class="dropdown-item" href="#">Something else here</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        {{ user.about_text }}
+<!--                        <div class="chart-pie pt-4 pb-2">-->
+<!--                            <canvas id="myPieChart"></canvas>-->
+<!--                        </div>-->
+<!--                        <div class="mt-4 text-center small">-->
+<!--                    <span class="mr-2">-->
+<!--                      <i class="fas fa-circle text-primary"></i> Clubs-->
+<!--                    </span>-->
+<!--                            <span class="mr-2">-->
+<!--                      <i class="fas fa-circle text-success"></i> Sponsorships-->
+<!--                    </span>-->
+<!--                            <span class="mr-2">-->
+<!--                      <i class="fas fa-circle text-info"></i> Donations-->
+<!--                    </span>-->
+<!--                        </div>-->
+                    </div>
                 </div>
             </div>
-        </footer>
-        <!-- End of Footer -->
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Further Fields</h6>
+                    </div>
+                    <div class="card-body">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Soluta incidunt praesentium quidem
+                            suscipit, fugiat eos eveniet quod nisi! Rem distinctio magni inventore ducimus possimus
+                            repudiandae fugit itaque quidem consequuntur obcaecati.</p>
+                        <p class="mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quas nam ut asperiores
+                            tempora maxime eveniet, libero, in debitis deserunt accusamus quasi quisquam perferendis
+                            amet rerum vitae dicta repudiandae, at enim?</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- DEAD CODE START -->
+        <div style="display:none">
+            <!-- Content Row -->
+            <div class="row">
+
+                <!-- Content Column -->
+                <div class="col-lg-6 mb-4">
+
+                    <!-- Project Card Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Projects</h6>
+                        </div>
+                        <div class="card-body">
+                            <h4 class="small font-weight-bold">Server Migration <span class="float-right">20%</span>
+                            </h4>
+                            <div class="progress mb-4">
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: 20%"
+                                     aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <h4 class="small font-weight-bold">Sales Tracking <span class="float-right">40%</span></h4>
+                            <div class="progress mb-4">
+                                <div class="progress-bar bg-warning" role="progressbar" style="width: 40%"
+                                     aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <h4 class="small font-weight-bold">Customer Database <span class="float-right">60%</span>
+                            </h4>
+                            <div class="progress mb-4">
+                                <div class="progress-bar" role="progressbar" style="width: 60%" aria-valuenow="60"
+                                     aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <h4 class="small font-weight-bold">Payout Details <span class="float-right">80%</span></h4>
+                            <div class="progress mb-4">
+                                <div class="progress-bar bg-info" role="progressbar" style="width: 80%"
+                                     aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <h4 class="small font-weight-bold">Account Setup <span class="float-right">Complete!</span>
+                            </h4>
+                            <div class="progress">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 100%"
+                                     aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Color System -->
+                    <div class="row">
+                        <div class="col-lg-6 mb-4">
+                            <div class="card bg-primary text-white shadow">
+                                <div class="card-body">
+                                    Primary
+                                    <div class="text-white-50 small">#4e73df</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 mb-4">
+                            <div class="card bg-success text-white shadow">
+                                <div class="card-body">
+                                    Success
+                                    <div class="text-white-50 small">#1cc88a</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 mb-4">
+                            <div class="card bg-info text-white shadow">
+                                <div class="card-body">
+                                    Info
+                                    <div class="text-white-50 small">#36b9cc</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 mb-4">
+                            <div class="card bg-warning text-white shadow">
+                                <div class="card-body">
+                                    Warning
+                                    <div class="text-white-50 small">#f6c23e</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 mb-4">
+                            <div class="card bg-danger text-white shadow">
+                                <div class="card-body">
+                                    Danger
+                                    <div class="text-white-50 small">#e74a3b</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 mb-4">
+                            <div class="card bg-secondary text-white shadow">
+                                <div class="card-body">
+                                    Secondary
+                                    <div class="text-white-50 small">#858796</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-lg-6 mb-4">
+
+                    <!-- Illustrations -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Illustrations</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center">
+                                <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;"
+                                     src="{% static 'img/undraw_posting_photo.svg' %}" alt="">
+                            </div>
+                            <p>Add some quality, svg illustrations to your project courtesy of <a target="_blank"
+                                                                                                  rel="nofollow"
+                                                                                                  href="https://undraw.co/">unDraw</a>,
+                                a constantly updated collection of beautiful svg images that you can use completely free
+                                and without attribution!</p>
+                            <a target="_blank" rel="nofollow" href="https://undraw.co/">Browse Illustrations on unDraw
+                                &rarr;</a>
+                        </div>
+                    </div>
+
+                    <!-- Approach -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Development Approach</h6>
+                        </div>
+                        <div class="card-body">
+                            <p>SB Admin 2 makes extensive use of Bootstrap 4 utility classes in order to reduce CSS
+                                bloat and poor page performance. Custom CSS classes are used to create custom components
+                                and custom utility classes.</p>
+                            <p class="mb-0">Before working with this theme, you should become familiar with the
+                                Bootstrap framework, especially the utility classes.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- DEAD CODE END -->
+
 
     </div>
-    <!-- End of Content Wrapper -->
+    <!-- /.container-fluid -->
+
+</div>
+<!-- End of Main Content -->
+
+<!-- Footer -->
+<footer class="sticky-footer bg-white">
+    <div class="container my-auto">
+        <div class="copyright text-center my-auto">
+            <span>Copyright &copy; GigFinder 2020</span>
+        </div>
+    </div>
+</footer>
+<!-- End of Footer -->
+
+</div>
+<!-- End of Content Wrapper -->
 
 </div>
 <!-- End of Page Wrapper -->
@@ -518,12 +767,46 @@
 <script src="{% static 'js/sb-admin-2.min.js' %}"></script>
 
 <!-- Page level plugins -->
-<script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
-<script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'vendor/chart.js/Chart.min.js' %}"></script>
 
 <!-- Page level custom scripts -->
-<script src="{% static 'js/demo/datatables-demo.js' %}"></script>
+<script src="{% static 'js/demo/chart-area-demo.js' %}"></script>
+<script src="{% static 'js/demo/chart-pie-demo.js' %}"></script>
 
+<script type="text/javascript">
+  //Status update js
+  function bs_input_file() {
+  $(".input-file").before(
+    function() {
+      if ( ! $(this).prev().hasClass('input-ghost') ) {
+        var element = $("<input type='file' class='input-ghost' style='visibility:hidden; height:0'>");
+        element.attr("name",$(this).attr("name"));
+        element.change(function(){
+          element.next(element).find('input').val((element.val()).split('\\').pop());
+        });
+        $(this).find("button.btn-choose").click(function(){
+          element.click();
+        });
+        $(this).find("button.btn-reset").click(function(){
+          element.val(null);
+          $(this).parents(".input-file").find('input').val('');
+        });
+        $(this).find('input').css("cursor","pointer");
+        $(this).find('input').mousedown(function() {
+          $(this).parents('.input-file').prev().click();
+          return false;
+        });
+        return element;
+      }
+    }
+  );
+}
+$(function() {
+  bs_input_file();
+});
+
+
+</script>
 </body>
 
 </html>

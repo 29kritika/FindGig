@@ -28,6 +28,8 @@ class Event(models.Model):
     endTime = models.TimeField()
     performer = models.ForeignKey(User, on_delete=models.PROTECT, related_name="Performer")
     video = EmbedVideoField(default='')
+    # sponsorramt = models.PositiveINtegerField(default=0)
+    sponsor = models.ForeignKey(User, on_delete=models.PROTECT, related_name="Sponsor")
     # dateTime = models.DateTimeField(auto_now=True) not able to get this value
 
 

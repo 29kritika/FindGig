@@ -56,17 +56,55 @@ def homePage(request):
         args['posts'] = posts
         return render(request, 'ip/dashboard.html', args)
     if user.type == 'band':
-        return render(request, 'band-home.html', args)
+        if request.method == 'POST':
+            form = PostCreationForm(request.POST)
+            if form.is_valid():
+                event = form.save(commit=False)
+                Post.objects.update_or_create(
+                    performer=user,
+                    description=event.description,
+                    video=event.video,
+                )
+                return redirect('Home')
+            else:
+                print("why dude")
+        else:
+            form = PostCreationForm()
+        args['form'] = form
+        posts = Post.objects.all().filter(performer=user)
+        args['posts'] = posts
+        return render(request, 'ip/dashboard_band.html', args)
     # Find the events organised by this user
     # send it to the html page in order to display his events temporarily
     try:
+        if request.method == 'POST':
+            form = EventCreationForm(request.POST)
+            if form.is_valid():
+                event = form.save(commit=False)
+                Event.objects.update_or_create(
+                    organiser=user,
+                    title=event.title,
+                    description=event.description,
+                    venue=event.venue,
+                    date=event.date,
+                    startTime=event.startTime,
+                    endTime=event.endTime,
+                    video=event.video,
+                )
+                return redirect('Home')
+            else:
+                print("why dude")
+        else:
+            form = EventCreationForm()
+        args['form'] = form
         events = Event.objects.all().filter(organiser=user)
-        print(events)
+        #print(events)
         args['events'] = events
+        return render(request, 'ip/dashboard_org.html', args)
     except:
         print('something')
         pass
-    return render(request, 'organiser-home.html', args)
+    return render(request, 'ip/dashboard_org.html', args)
 
 
 def signUp(request):
@@ -88,6 +126,29 @@ def signUp(request):
     arg = {'form': form}
     return render(request, 'signup.html', arg)
 
+def profile(request, id):
+    socialUser = request.user
+    user = User.objects.get(user=socialUser)
+    args = {'user': user, }
+    puser = User.objects.get(id=id)
+    args['puser'] = puser
+    if puser.type == 'organiser':
+        events = Event.objects.all().filter(organiser=puser)
+        args['events'] = events
+        return render(request, 'ip/profile_org.html', args)
+
+    posts = Post.objects.all().filter(performer=puser)
+    args['posts'] = posts
+    args['pusersid']=id
+    return render(request, 'ip/profile.html', args)
+
+def sponsor(request, eventid):
+    socialUser = request.user
+    user = User.objects.get(user=socialUser)
+    event = Event.objects.get(id=eventid)
+    event.sponsor = user
+    event.save()
+    return redirect('Home')
 
 def asettings(request):
     socialUser = request.user
@@ -245,3 +306,5 @@ def search(request):
 
 def allEvents(request):
     pass
+
+
