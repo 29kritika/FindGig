@@ -5,9 +5,64 @@ from .forms import CustomUserCreationForm, Bio, Name, City, Gender, EventCreatio
 from django.http import Http404
 from django.views.generic import CreateView
 from embed_video.backends import detect_backend
+from googleapiclient import discovery
+from oauth2client import tools
+from oauth2client.client import OAuth2WebServerFlow
+from oauth2client.file import Storage
+import http.client
 
 
-# _______________________Classes__________________________
+# ---------------------------------------------------------------------------
+# google_calendar_connection
+# ---------------------------------------------------------------------------
+def google_calendar_connection():
+    """
+    This method used for connect with google calendar api.
+    """
+
+    flags = tools.argparser.parse_args([])
+    FLOW = OAuth2WebServerFlow(
+        client_id='138066949846-lpgv7nb008ng1rmqelf6qlg2jmdgv1ge.apps.googleusercontent.com',
+        client_secret='7TCJvapWyxTRs5gwrhcSY0re',
+        scope='https://www.googleapis.com/auth/calendar',
+        user_agent='GigFinder'
+    )
+    storage = Storage('calendar.dat')
+    credentials = storage.get()
+    if credentials is None or credentials.invalid == True:
+        credentials = tools.run_flow(FLOW, storage, flags)
+
+    # Create an httplib2.Http object to handle our HTTP requests and authorize it
+    # with our good Credentials.
+    http = httplib2.Http()
+    http = credentials.authorize(http)
+    service = discovery.build('calendar', 'v3', http=http)
+    return service
+
+def create_cal(request):
+    """
+    This method used for add event in google calendar.
+    """
+    service = self.google_calendar_connection()
+
+    event = {
+        'summary': "new",
+        'location': "london",
+        'description': "anything",
+        'start': {
+            'dateTime': "2020-05-22T18:00:00\s"
+        },
+        'end': {
+            'dateTime': "2020-05-22T18:30:00\s"
+        },
+
+    }
+
+    event = service.events().insert(calendarId='primary', body=event).execute()
+    print(event['start'])
+    return render(request, 'ip/dashboard.html', args)
+
+    # _______________________Classes__________________________
 
 
 # ____________________Functions____________________________
@@ -54,7 +109,11 @@ def homePage(request):
         args['form'] = form
         posts = Post.objects.all().filter(performer=user)
         args['posts'] = posts
+        events = Event.objects.all()
+        args['events'] = events
+        create_cal(request)
         return render(request, 'ip/dashboard.html', args)
+
     if user.type == 'band':
         if request.method == 'POST':
             form = PostCreationForm(request.POST)
@@ -73,6 +132,8 @@ def homePage(request):
         args['form'] = form
         posts = Post.objects.all().filter(performer=user)
         args['posts'] = posts
+        events = Event.objects.all()
+        args['events'] = events
         return render(request, 'ip/dashboard_band.html', args)
     # Find the events organised by this user
     # send it to the html page in order to display his events temporarily
