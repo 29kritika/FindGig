@@ -1,8 +1,10 @@
+import httplib2
 from django.db.models import Q
 from django.shortcuts import render, redirect
 from .models import User, Event, Post
 from .forms import CustomUserCreationForm, Bio, Name, City, Gender, EventCreationForm, PostCreationForm
 from django.http import Http404
+from FindGig.settings import STATICFILES_DIRS
 from django.views.generic import CreateView
 from embed_video.backends import detect_backend
 from googleapiclient import discovery
@@ -10,60 +12,47 @@ from oauth2client import tools
 from oauth2client.client import OAuth2WebServerFlow
 from oauth2client.file import Storage
 import http.client
+import os
+from datetime import timedelta
+import datetime
+import pytz
+
+import httplib2
+from googleapiclient.discovery import build
+from oauth2client.service_account import ServiceAccountCredentials
+
+service_account_email = 'findgig@gogig-274207.iam.gserviceaccount.com'
+
+CLIENT_SECRET_FILE = STATICFILES_DIRS[0] + 'gogig-274207-3c74826599ce.json'
+
+SCOPES = 'https://www.googleapis.com/auth/calendar'
+scopes = [SCOPES]
 
 
-# ---------------------------------------------------------------------------
-# google_calendar_connection
-# ---------------------------------------------------------------------------
-def google_calendar_connection():
-    """
-    This method used for connect with google calendar api.
-    """
+def build_service():
+    credentials = ServiceAccountCredentials.from_json_keyfile_name(filename=CLIENT_SECRET_FILE,scopes=scopes)
 
-    flags = tools.argparser.parse_args([])
-    FLOW = OAuth2WebServerFlow(
-        client_id='138066949846-lpgv7nb008ng1rmqelf6qlg2jmdgv1ge.apps.googleusercontent.com',
-        client_secret='7TCJvapWyxTRs5gwrhcSY0re',
-        scope='https://www.googleapis.com/auth/calendar',
-        user_agent='GigFinder'
-    )
-    storage = Storage('calendar.dat')
-    credentials = storage.get()
-    if credentials is None or credentials.invalid == True:
-        credentials = tools.run_flow(FLOW, storage, flags)
+    http = credentials.authorize(httplib2.Http())
 
-    # Create an httplib2.Http object to handle our HTTP requests and authorize it
-    # with our good Credentials.
-    http = httplib2.Http()
-    http = credentials.authorize(http)
-    service = discovery.build('calendar', 'v3', http=http)
+    service = build('calendar', 'v3', http=http)
+
     return service
 
 
-def create_cal(request):
-    """
-    This method used for add event in google calendar.
-    """
-    service = self.google_calendar_connection()
+def create_event(request,args):
+    service = build_service()
 
-    event = {
-        'summary': "new",
-        'location': "london",
-        'description': "anything",
-        'start': {
-            'dateTime': "2020-05-22T18:00:00\s"
-        },
-        'end': {
-            'dateTime': "2020-05-22T18:30:00\s"
-        },
+    start_datetime = datetime.datetime.now(tz=pytz.utc)
+    event = service.events().insert(calendarId='primary', body={
+        'summary': 'Foo',
+        'description': 'Bar',
+        'start': {'dateTime': start_datetime.isoformat()},
+        'end': {'dateTime': (start_datetime + timedelta(minutes=15)).isoformat()},
+    }).execute()
+    print(event)
+    return render(request, 'artists/dashboard.html', args)
 
-    }
-
-    event = service.events().insert(calendarId='primary', body=event).execute()
-    print(event['start'])
-    return render(request, 'artists/dashboard.html')
-
-    # _______________________Classes__________________________
+# _______________________Classes__________________________
 
 
 # ____________________Functions____________________________
@@ -112,7 +101,7 @@ def homePage(request):
         args['posts'] = posts
         events = Event.objects.all()
         args['events'] = events
-        # create_cal(request)
+        create_event(request, args)
         return render(request, 'artists/dashboard.html', args)
 
     if user.type == 'band':
