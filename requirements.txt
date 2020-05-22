@@ -11,3 +11,5 @@ Please make sure all of these packages are installed in your virtual env
 - pymongo: pip install pymongo[srv] // pip3 install pymongo[srv]
 - embed-video: pip install django-embed-video
 - crispy-forms(for bootstrap): pip install django-crispy-forms
+- pip install --upgrade google-api-python-client
+- pip3 install --upgrade oauth2client
