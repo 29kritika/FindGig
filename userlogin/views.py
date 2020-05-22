@@ -39,6 +39,7 @@ def google_calendar_connection():
     service = discovery.build('calendar', 'v3', http=http)
     return service
 
+
 def create_cal(request):
     """
     This method used for add event in google calendar.
@@ -60,7 +61,7 @@ def create_cal(request):
 
     event = service.events().insert(calendarId='primary', body=event).execute()
     print(event['start'])
-    return render(request, 'ip/dashboard.html', args)
+    return render(request, 'artists/dashboard.html')
 
     # _______________________Classes__________________________
 
@@ -111,8 +112,8 @@ def homePage(request):
         args['posts'] = posts
         events = Event.objects.all()
         args['events'] = events
-        create_cal(request)
-        return render(request, 'ip/dashboard.html', args)
+        # create_cal(request)
+        return render(request, 'artists/dashboard.html', args)
 
     if user.type == 'band':
         if request.method == 'POST':
@@ -134,7 +135,7 @@ def homePage(request):
         args['posts'] = posts
         events = Event.objects.all()
         args['events'] = events
-        return render(request, 'ip/dashboard_band.html', args)
+        return render(request, 'bands/dashboard_band.html', args)
     # Find the events organised by this user
     # send it to the html page in order to display his events temporarily
     try:
@@ -161,11 +162,11 @@ def homePage(request):
         events = Event.objects.all().filter(organiser=user)
         #print(events)
         args['events'] = events
-        return render(request, 'ip/dashboard_org.html', args)
+        return render(request, 'organisers/dashboard_org.html', args)
     except:
         print('something')
         pass
-    return render(request, 'ip/dashboard_org.html', args)
+    return render(request, 'organisers/dashboard_org.html', args)
 
 
 def signUp(request):
@@ -187,6 +188,7 @@ def signUp(request):
     arg = {'form': form}
     return render(request, 'signup.html', arg)
 
+
 def profile(request, id):
     socialUser = request.user
     user = User.objects.get(user=socialUser)
@@ -196,12 +198,13 @@ def profile(request, id):
     if puser.type == 'organiser':
         events = Event.objects.all().filter(organiser=puser)
         args['events'] = events
-        return render(request, 'ip/profile_org.html', args)
+        return render(request, 'organisers/profile_org.html', args)
 
     posts = Post.objects.all().filter(performer=puser)
     args['posts'] = posts
     args['pusersid']=id
-    return render(request, 'ip/profile.html', args)
+    return render(request, 'profile_artist_band.html', args)
+
 
 def sponsor(request, eventid):
     socialUser = request.user
@@ -210,6 +213,7 @@ def sponsor(request, eventid):
     event.sponsor = user
     event.save()
     return redirect('Home')
+
 
 def asettings(request):
     socialUser = request.user
@@ -349,7 +353,7 @@ def search(request):
     user = User.objects.get(user=request.user)
     args = {'search_set': list(set(queryset)), 'user': user}
 
-    return render(request, 'ip/searchresult.html', args)
+    return render(request, 'searchresult.html', args)
     # return render(request, 'artists/search-bands.html', {'search_set': list(set(queryset))})
 
 
