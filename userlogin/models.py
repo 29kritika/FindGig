@@ -7,8 +7,8 @@ from django.contrib.auth.models import User as djangoUser
 
 class User(models.Model):
     user = models.OneToOneField(djangoUser, on_delete=models.CASCADE, unique=True, null=False, db_index=True)
-    type = models.TextField(max_length=500, choices=(('artist', 'Artist'), ('organiser', 'Organiser'), ('band', 'Band')),
-                            default='artist')
+    type = models.TextField(max_length=500, choices=(('artist', 'Artist'), ('organiser', 'Organiser'), ('band', 'Band'),
+                                                     ('custom user', 'Custom User')), default='artist')
     username = models.CharField(unique=True, max_length=255)
     name = models.CharField(max_length=255)
     about_text = models.CharField(max_length=500, default='')
@@ -28,8 +28,9 @@ class Event(models.Model):
     endTime = models.TimeField()
     performer = models.ForeignKey(User, on_delete=models.PROTECT, related_name="Performer")
     video = EmbedVideoField(default='')
+    sponsors = models.ManyToManyField(User)
     # sponsorramt = models.PositiveINtegerField(default=0)
-    sponsor = models.ForeignKey(User, on_delete=models.PROTECT, related_name="Sponsor")
+    # sponsor = models.ForeignKey(User, on_delete=models.PROTECT, related_name="Sponsor")
     # dateTime = models.DateTimeField(auto_now=True) not able to get this value
 
 
