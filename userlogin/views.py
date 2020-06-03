@@ -347,13 +347,18 @@ def createEvent(request):
 
 
 def eventPage(request, id):
-    # socialuser = request.user
-    # user = User.objects.get(user=socialuser)
+    socialuser = request.user
+    user = User.objects.get(user=socialuser)
     # will be editable for organiser (need to add that)
 
     event = Event.objects.get(id=id)
     sponsors = Sponsor.objects.all().filter(Event=event)
-    args = {'event': event, 'sponsors': sponsors}
+    k = True
+    for s in sponsors:
+        if s.sponsor == user:
+            k = False
+            break
+    args = {'event': event, 'sponsors': sponsors, 'check': k}
     return render(request, 'events/AboutEvent.html', args)
 
 

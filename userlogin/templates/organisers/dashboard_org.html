@@ -429,143 +429,58 @@
 
 
                 <div class="row">
-                    <div class="col-8 mx-auto mb-4">
 
-                        <!-- upload status -->
+                    <!-- Area Chart -->
+                    <div class="col-6">
                         <div class="card shadow mb-4">
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary"> Create event </h6>
+                            <!-- Card Header - Dropdown -->
+                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0 font-weight-bold text-primary">Posts</h6>
                             </div>
-
+                            <!-- Card Body -->
                             <div class="card-body">
-                                <form method="POST">
-                                    {% csrf_token %}
-                                    {{form|crispy}}
-                                    <button type="submit">Create</button>
-                                </form>
-                                <!--                  &lt;!&ndash; UPLOAD &ndash;&gt;-->
-                                <!--                  <form method="POST" action="#" enctype="multipart/form-data">-->
-                                <!--                    <div class="form-group mb-0" >-->
-                                <!--                      <input type="text" class="form-control rounded" id="uploadDescription" placeholder="Enter a description...">-->
-                                <!--                    </div>-->
-                                <!--                    &lt;!&ndash; https://codepen.io/Sebus059/pen/MwMQbP &ndash;&gt;-->
-                                <!--                    &lt;!&ndash; COMPONENT START &ndash;&gt;-->
-                                <!--                    <div class="form-group">-->
-                                <!--                      <div class="input-group input-file" name="Fichier1">-->
-                                <!--                          <input type="text" class="form-control" placeholder='Choose a file...' />     -->
-                                <!--                            <span class="input-group-btn">-->
-                                <!--                              <button class="btn btn-default btn-choose" type="button">Choose</button>-->
-                                <!--                            </span>-->
-                                <!--                      </div>-->
-                                <!--                    </div>-->
-                                <!--                    <div class="form-group">-->
-                                <!--                      &lt;!&ndash; Need to add redirect links &ndash;&gt;-->
-                                <!--                      <button type="submit" class="btn btn-primary pull-right">Submit</button> -->
-                                <!--                      <button type="reset" class="btn btn-danger">Reset</button>-->
-                                <!--                    </div>-->
-                                <!--                  </form>-->
+                                {% for event in posts %}
+                                description: {{event.description}}
+                                <br>
+                                <br>
+
+                                {% video event.video as my_video %}
+                                {% video my_video '300x300' %}
+                                {% endvideo %}
+                                {% endfor %}
+                                <!--                  <div class="chart-area">-->
+                                <!--                    <canvas id="myAreaChart"></canvas>-->
+                                <!--                  </div>-->
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Content Row -->
-
-                <div class="row">
 
                     <!-- Area Chart -->
-                    <div class="col-xl-8 col-lg-7">
+                    <div class="col-6">
                         <div class="card shadow mb-4">
                             <!-- Card Header - Dropdown -->
                             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                                 <h6 class="m-0 font-weight-bold text-primary">Upcoming Events</h6>
-
-                                <!-- <div class="dropdown no-arrow">
-                                  <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                  </a>
-                                  <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
-                                    <div class="dropdown-header">Dropdown Header:</div>
-                                    <a class="dropdown-item" href="#">Action</a>
-                                    <a class="dropdown-item" href="#">Another action</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#">Something else here</a>
-                                  </div>
-                                </div> -->
                             </div>
                             <!-- Card Body -->
-                            <div class="card-body">
+                            <div class="card-body text-center">
                                 {% for event in events %}
                                         <a href="{% url 'event-page' %}{{event.id}}">{{event.title}}</a>
                                         <br>
+                                        {{ event.description }}
                                         <br>
+
                                         {% video event.video as my_video %}
-                                        {% video my_video '600x450' %}
+                                        {% video my_video '450x300' %}
                                         {% endvideo %}
                                 {% endfor %}
                             </div>
                         </div>
                     </div>
-
-                    <!-- Pie Chart -->
-                    <div class="col-xl-4 col-lg-5">
-                        <div class="card shadow mb-4">
-                            <!-- Card Header - Dropdown -->
-                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                <h6 class="m-0 font-weight-bold text-primary"><a href="{{ user.about_link }}">{{ user.about_link }}</a></h6>
-                                <!--                  <h6 class="m-0 font-weight-bold text-primary">Revenue Sources</h6>-->
-                                                  <div class="dropdown no-arrow">
-                                                    <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                      <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                                    </a>
-                                                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
-                                                      <div class="dropdown-header">Dropdown Header:</div>
-                                                      <a class="dropdown-item" href="#">Action</a>
-                                                      <a class="dropdown-item" href="#">Another action</a>
-                                                      <div class="dropdown-divider"></div>
-                                                      <a class="dropdown-item" href="#">Something else here</a>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Card Body -->
-                    <div class="card-body">
-                        {{ user.about_text }}
-<!--                        <div class="chart-pie pt-4 pb-2">-->
-<!--                            <canvas id="myPieChart"></canvas>-->
-<!--                        </div>-->
-<!--                        <div class="mt-4 text-center small">-->
-<!--                    <span class="mr-2">-->
-<!--                      <i class="fas fa-circle text-primary"></i> Clubs-->
-<!--                    </span>-->
-<!--                            <span class="mr-2">-->
-<!--                      <i class="fas fa-circle text-success"></i> Sponsorships-->
-<!--                    </span>-->
-<!--                            <span class="mr-2">-->
-<!--                      <i class="fas fa-circle text-info"></i> Donations-->
-<!--                    </span>-->
-<!--                        </div>-->
-                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-12">
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Further Fields</h6>
-                    </div>
-                    <div class="card-body">
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Soluta incidunt praesentium quidem
-                            suscipit, fugiat eos eveniet quod nisi! Rem distinctio magni inventore ducimus possimus
-                            repudiandae fugit itaque quidem consequuntur obcaecati.</p>
-                        <p class="mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quas nam ut asperiores
-                            tempora maxime eveniet, libero, in debitis deserunt accusamus quasi quisquam perferendis
-                            amet rerum vitae dicta repudiandae, at enim?</p>
-                    </div>
-                </div>
-            </div>
-        </div>
         <!-- DEAD CODE START -->
         <div style="display:none">
             <!-- Content Row -->

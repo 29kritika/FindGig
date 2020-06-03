@@ -1,24 +1,179 @@
-<!doctype html>
+<!DOCTYPE html>
+{% load static %}
+{% load crispy_forms_tags %}
 <html lang="en">
+
 <head>
+
   <meta charset="utf-8">
-  <title>GigFinder</title>
-  <link
-    rel="stylesheet"
-    href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
-    integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"
-    crossorigin="anonymous">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Register</title>
+
+  <!-- Custom fonts for this template-->
+  <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+  <!-- Custom styles for this template-->
+  <link href="{% static 'css/sb-admin-2.css' %}" rel="stylesheet">
+
 </head>
-<body>
-  <div class="jumbotron">
-    <h1>GigFinder</h1>
-    {% if user.is_authenticated %}
-      <meta http-equiv="refresh" content="0; {% url 'Home' %}">
-    {% else %}
-      <a class="btn btn-primary" href="{% url 'social:begin' 'google-oauth2' %}">
-        Sign in with Google
-      </a>
-    {% endif %}
+
+<body style="background-color: #f3f3f3;">
+
+  <div class="container">
+
+    <div class="card o-hidden border-0 my-5" style="box-shadow: 5px 10px 18px #7AAAF2;    ">
+      <div class="card-body p-0" style="height:80vh;">
+        <!-- Nested Row within Card Body -->
+        <div class="row" style="height:80vh;">
+          <div class="col-lg-7 d-none d-lg-block bg-register-image"></div>
+          <div class="col-lg-4">
+            <div class="p-5">
+<!--              <div class="text-center">-->
+<!--                <h1 class="h4 text-gray-900 mb-4"></h1>-->
+<!--              </div>-->
+
+              <div id="HELLLOO">
+                <div class="w-auto text-center input-group mb-3" style="margin-top: 70%; margin-left:30%;">
+                  {% if user.is_authenticated %}
+                    <meta http-equiv="refresh" content="0; {% url 'Home' %}">
+                  {% else %}
+                    <a class="btn btn-primary" style="text-align:center;" href="{% url 'social:begin' 'google-oauth2' %}">
+                      Sign in with Google
+                    </a>
+                  {% endif %}
+<!--                  <p class="mt-2 h5 text-gray-800 mr-3" >You are a </p>-->
+
+<!--                    <button class="mx-2 d-inline btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseBandForm">-->
+<!--                      Band/Artist-->
+<!--                    </button>-->
+
+<!--                    <button class="mx-2 d-inline btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseClubForm">-->
+<!--                      Club/Organiser-->
+<!--                    </button>-->
+
+                </div>
+
+<!--                <div class="accordion-group">-->
+<!--                  <div class="collapse" id="collapseBandForm" data-parent="#HELLLOO">-->
+<!--                    <form class="user">-->
+<!--                      <div class="form-group row">-->
+<!--                        <div class="col-sm-6 mb-3 mb-sm-0">-->
+<!--                          <input type="text" class="form-control form-control-user" id="exampleFirstName" placeholder="First Name">-->
+<!--                        </div>-->
+<!--                        <div class="col-sm-6">-->
+<!--                          <input type="text" class="form-control form-control-user" id="exampleLastName" placeholder="Last Name">-->
+<!--                        </div>-->
+<!--                      </div>-->
+<!--      &lt;!&ndash;                 <div class="form-group">-->
+<!--                        <input type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Email Address">-->
+<!--                      </div> &ndash;&gt;-->
+<!--                      <div class="form-group row">-->
+<!--                        <div class="col-sm-6 mb-3 mb-sm-0">-->
+<!--                          <input type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Password">-->
+<!--                        </div>-->
+<!--                        <div class="col-sm-6">-->
+<!--                          <input type="password" class="form-control form-control-user" id="exampleRepeatPassword" placeholder="Repeat Password">-->
+<!--                        </div>-->
+<!--                      </div>-->
+<!--                      <a href="login.html" class="btn btn-primary btn-user btn-block">-->
+<!--                        Register Account-->
+<!--                      </a>-->
+    <!--                   <hr>
+                      <a href="index.html" class="btn btn-google btn-user btn-block">
+                        <i class="fab fa-google fa-fw"></i> Register with Google
+                      </a>
+                      <a href="index.html" class="btn btn-facebook btn-user btn-block">
+                        <i class="fab fa-facebook-f fa-fw"></i> Register with Facebook
+                      </a> -->
+                    </form>
+                  </div>
+
+
+                  <div class="collapse" id="collapseClubForm" data-parent="#HELLLOO">
+                    <form class="user">
+                      <div class="form-group row">
+                        <div class="col-sm-6 mb-3 mb-sm-0">
+                          <input type="text" class="form-control form-control-user" id="exampleFirstName" placeholder="First Name">
+                        </div>
+                        <div class="col-sm-6">
+                          <input type="text" class="form-control form-control-user" id="exampleLastName" placeholder="Last Name">
+                        </div>
+                      </div>
+      <!--                 <div class="form-group">
+                        <input type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Email Address">
+                      </div> -->
+                      <div class="form-group row">
+                        <div class="col-sm-6 mb-3 mb-sm-0">
+                          <input type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Password">
+                        </div>
+                        <div class="col-sm-6">
+                          <input type="password" class="form-control form-control-user" id="exampleRepeatPassword" placeholder="Repeat Password">
+                        </div>
+                      </div>
+                      <a href="login.html" class="btn btn-primary btn-user btn-block">
+                        Register Account
+                      </a>
+    <!--                   <hr>
+                      <a href="index.html" class="btn btn-google btn-user btn-block">
+                        <i class="fab fa-google fa-fw"></i> Register with Google
+                      </a>
+                      <a href="index.html" class="btn btn-facebook btn-user btn-block">
+                        <i class="fab fa-facebook-f fa-fw"></i> Register with Facebook
+                      </a> -->
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+
+              <hr>
+<!--               <div class="text-center">
+                <a class="small" href="forgot-password.html">Forgot Password?</a>
+              </div> -->
+<!--              <div class="text-center">-->
+<!--                <a class="small" href="login.html">Already have an account? Login!</a>-->
+<!--              </div>-->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
+
+  <!-- Bootstrap core JavaScript-->
+  <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+  <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="{% static 'js/sb-admin-2.min.js' %}"></script>
+
 </body>
+
 </html>
+<!--<!doctype html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--  <meta charset="utf-8">-->
+<!--  <title>GigFinder</title>-->
+<!--  <link-->
+<!--    rel="stylesheet"-->
+<!--    href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"-->
+<!--    integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"-->
+<!--    crossorigin="anonymous">-->
+<!--</head>-->
+<!--<body>-->
+<!--  <div class="jumbotron">-->
+<!--    <h1>GigFinder</h1>-->
+
+<!--  </div>-->
+<!--</body>-->
+<!--</html>-->
