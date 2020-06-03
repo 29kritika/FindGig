@@ -1,0 +1,13 @@
+<html>
+<head>
+    <title>Sponsor Form</title>
+</head>
+<body>
+    <h1>Sponsor Form</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>

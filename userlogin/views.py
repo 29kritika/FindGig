@@ -2,7 +2,7 @@ import httplib2
 from django.db.models import Q
 from django.shortcuts import render, redirect
 from .models import User, Event, Post
-from .forms import CustomUserCreationForm, Bio, Name, City, Gender, EventCreationForm, PostCreationForm
+from .forms import *
 from django.http import Http404
 from FindGig.settings import STATICFILES_DIRS
 from django.views.generic import CreateView
@@ -48,6 +48,7 @@ def create_event(request,args):
         'description': 'Bar',
         'start': {'dateTime': start_datetime.isoformat()},
         'end': {'dateTime': (start_datetime + timedelta(minutes=15)).isoformat()},
+        # add attendees
     }).execute()
     print(event)
     return render(request, 'artists/dashboard.html', args)
@@ -101,10 +102,31 @@ def homePage(request):
         args['posts'] = posts
         events = Event.objects.all()
         args['events'] = events
-        create_event(request, args)
+        # create_event(request, args)
         return render(request, 'artists/dashboard.html', args)
 
     if user.type == 'band':
+        if request.method == 'POST':
+            form = PostCreationForm(request.POST)
+            if form.is_valid():
+                event = form.save(commit=False)
+                Post.objects.update_or_create(
+                    performer=user,
+                    description=event.description,
+                    video=event.video,
+                )
+                return redirect('Home')
+            else:
+                print("why dude")
+        else:
+            form = PostCreationForm()
+        args['form'] = form
+        posts = Post.objects.all().filter(performer=user)
+        args['posts'] = posts
+        events = Event.objects.all()
+        args['events'] = events
+        return render(request, 'bands/dashboard_band.html', args)
+    if user.type == 'custom user':
         if request.method == 'POST':
             form = PostCreationForm(request.POST)
             if form.is_valid():
@@ -199,9 +221,22 @@ def sponsor(request, eventid):
     socialUser = request.user
     user = User.objects.get(user=socialUser)
     event = Event.objects.get(id=eventid)
-    event.sponsor = user
-    event.save()
-    return redirect('Home')
+    if request.method == 'POST':
+        form = SponsorForm(request.POST)
+        if form.is_valid():
+            sponsor = form.save(commit=False)
+            Sponsor.objects.update_or_create(
+                sponsor=user,
+                Amount=sponsor.Amount,
+                Event=event,
+            )
+            return redirect('/')
+        else:
+            print("why dude")
+    else:
+        form = SponsorForm
+    arg = {'form': form}
+    return render(request, 'sponsor.html', arg)
 
 
 def asettings(request):
@@ -317,7 +352,8 @@ def eventPage(request, id):
     # will be editable for organiser (need to add that)
 
     event = Event.objects.get(id=id)
-    args = {'event': event}
+    sponsors = Sponsor.objects.all().filter(Event=event)
+    args = {'event': event, 'sponsors': sponsors}
     return render(request, 'events/AboutEvent.html', args)
 
 

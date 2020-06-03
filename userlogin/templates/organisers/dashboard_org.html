@@ -496,11 +496,9 @@
                             <!-- Card Body -->
                             <div class="card-body">
                                 {% for event in events %}
-                                        {{event.title}}
-<!--                                        <a href="{% url 'event-page' %}{{event.id}}">{{event.title}}</a>-->
+                                        <a href="{% url 'event-page' %}{{event.id}}">{{event.title}}</a>
                                         <br>
                                         <br>
-
                                         {% video event.video as my_video %}
                                         {% video my_video '600x450' %}
                                         {% endvideo %}

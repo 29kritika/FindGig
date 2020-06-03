@@ -6,6 +6,10 @@
     <h1>{{event.title}}</h1>
     description: {{event.description}}
     <br>
+    sponsors:
+    {% for sponsor in sponsors %}
+        {{sponsor.sponsor.name}} <br>
+    {% endfor %}
     <br>
     venue: {{event.venue}}<br>
     date: {{event.date}}<br>

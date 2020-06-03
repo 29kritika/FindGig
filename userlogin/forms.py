@@ -1,5 +1,5 @@
 from django.contrib.auth.forms import UserCreationForm
-from .models import User, Event, Post
+from .models import User, Event, Post, Sponsor
 from django import forms
 
 
@@ -51,7 +51,7 @@ class PostCreationForm(forms.ModelForm):
         fields = ('description', 'video')
 
 
-# class SponsorForm(forms.Model):
-#     class Meta:
-#         model = Event
-#         fields = ('sponsoramt')
+class SponsorForm(forms.ModelForm):
+    class Meta:
+        model = Sponsor
+        fields = ('Amount', )
