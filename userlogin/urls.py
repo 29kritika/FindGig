@@ -20,8 +20,12 @@ from django.conf.urls import url
 from django.conf import settings
 from django.contrib.auth.views import LogoutView
 
+import notifications.urls
+
 urlpatterns = [
     url('', include('social_django.urls', namespace='social')),
+    url('^inbox/notifications/', include(notifications.urls, namespace='notifications')),
+
     path('home/', views.homePage, name='Home'),
     path('signup/', views.signUp, name='Signup'),
     path('logout/', LogoutView.as_view(), {'next_page': settings.LOGOUT_REDIRECT_URL}, name='logout'),
@@ -35,10 +39,12 @@ urlpatterns = [
     # path('home/search-bands/search-bands.html', views.search_bands, name='search-bands'),
     path('home/search.html', views.search, name='search'),
     path('home/search/method="POST"', views.search, name='search1'),
+    path('home/notifications/', views.view_notifications, name='view-notifications'),
 
     path('home/create-event/', views.createEvent, name='create-event'),
     path('events/', views.allEvents, name='event-page'),
-    url(r'^events/(?P<id>\d+)', views.eventPage, name='event-desciption'),
+    url(r'^events/(?P<id>\d+)', views.eventPage, name='event-description'),
+    url(r'^events/request-performance/(?P<eventid>\d+)/', views.perform, name='request-performance'),
     url('view_profile/(?P<id>\d+)', views.profile, name='view_profile'),
     url('view_profile/sponsor/(?P<eventid>\d+)', views.sponsor, name='sponsor'),
     path('', views.index),

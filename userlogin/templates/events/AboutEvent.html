@@ -65,6 +65,15 @@
         <!-- Divider -->
         <hr class="sidebar-divider">
 
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'view-notifications' %}">
+                <i class="fa fa-bell" aria-hidden="true"></i>
+                <span>Notifications</span> &emsp; {% live_notify_badge %}</a>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+
 
         <!-- Nav Item - Pages Collapse Menu -->
         <li class="nav-item">
@@ -441,7 +450,7 @@
 
                                 {% video event.video as my_video %}
                                   {% video my_video '600x450' %}
-                                {% endvideo %}
+                                {% endvideo %} <br>
                                 Description: {{event.description}} <br>
                                 Organiser: {{event.organiser.name}}
                                 <br>
@@ -450,11 +459,19 @@
                                     {{sponsor.sponsor.name}},
                                 {% endfor %}
                                 <br>
+                                performances by:
+                                {% for performer in performers %}
+                                    {{performer.performer.name}},
+                                {% endfor %}
+                                <br>
                                 venue: {{event.venue}}<br>
                                 date: {{event.date}}<br>
                                 from: {{event.startTime}} to {{event.endTime}}<br>
-                                {% if check %}
-                                <a href="{% url 'sponsor' eventid=event.id %}">Sponsor this event</a>
+                                {% if check_sponsor %}
+                                <a href="{% url 'sponsor' eventid=event.id %}">Sponsor this event</a> <br>
+                                {% endif %}
+                                {% if check_performer %}
+                                <a href="{% url 'request-performance' eventid=event.id %}">Request to perform at this event</a> <br>
                                 {% endif %}
                             </div>
                         </div>

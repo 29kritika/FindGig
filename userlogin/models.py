@@ -26,7 +26,6 @@ class Event(models.Model):
     date = models.DateField()
     startTime = models.TimeField()
     endTime = models.TimeField()
-    performer = models.ForeignKey(User, on_delete=models.PROTECT, related_name="Performer")
     video = EmbedVideoField(default='')
     # dateTime = models.DateTimeField(auto_now=True) not able to get this value
 
@@ -34,7 +33,7 @@ class Event(models.Model):
 class Sponsor(models.Model):
     sponsor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sponsor')
     Amount = models.PositiveSmallIntegerField(default=0)
-    Event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='event')
+    Event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='sponsor_event')
 
 
 class Post(models.Model):
@@ -43,6 +42,11 @@ class Post(models.Model):
     performer = models.ForeignKey(User, on_delete=models.PROTECT, related_name='post_user')
     video = EmbedVideoField(default='')
 
+
+class Performer(models.Model):
+    performer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='performer')
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='performance_event')
+    request_accepted = models.BooleanField(default=False)
 
 # class Song(models.Model):
 #     id = models.TextField(max_length=10, unique=True, null=False, db_index=True)

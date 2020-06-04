@@ -13,7 +13,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Dashboard</title>
+    <title>Notifications</title>
 
     <!-- Custom fonts for this template-->
     <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
@@ -68,7 +68,7 @@
 
         <li class="nav-item">
             <a class="nav-link" href="{% url 'view-notifications' %}">
-                <i class="fas fa-fw fa-bolt"></i>
+                <i class="fa fa-bell" aria-hidden="true"></i>
                 <span>Notifications</span> &emsp; {% live_notify_badge %}</a>
         </li>
 
@@ -430,103 +430,25 @@
 
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800">DASHBOARD</h1>
+                    <h1 class="h3 mb-0 text-gray-800">NOTIFICATIONS</h1>
                     <!--             <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generate Report</a> -->
                 </div>
 
                 <hr class="mb-5">
-
+                {% for notif in notifs %}
                 <div class="row">
-                    <div class="col-8 mx-auto mb-4">
+                    <div class="col-12 mx-auto mb-4">
 
                         <!-- upload status -->
                         <div class="card shadow mb-4">
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary"> Create event </h6>
-                            </div>
 
                             <div class="card-body">
-                                <form method="POST">
-                                    {% csrf_token %}
-                                    {{form|crispy}}
-                                    <button type="submit">Create</button>
-                                </form>
-                                <!--                  &lt;!&ndash; UPLOAD &ndash;&gt;-->
-                                <!--                  <form method="POST" action="#" enctype="multipart/form-data">-->
-                                <!--                    <div class="form-group mb-0" >-->
-                                <!--                      <input type="text" class="form-control rounded" id="uploadDescription" placeholder="Enter a description...">-->
-                                <!--                    </div>-->
-                                <!--                    &lt;!&ndash; https://codepen.io/Sebus059/pen/MwMQbP &ndash;&gt;-->
-                                <!--                    &lt;!&ndash; COMPONENT START &ndash;&gt;-->
-                                <!--                    <div class="form-group">-->
-                                <!--                      <div class="input-group input-file" name="Fichier1">-->
-                                <!--                          <input type="text" class="form-control" placeholder='Choose a file...' />     -->
-                                <!--                            <span class="input-group-btn">-->
-                                <!--                              <button class="btn btn-default btn-choose" type="button">Choose</button>-->
-                                <!--                            </span>-->
-                                <!--                      </div>-->
-                                <!--                    </div>-->
-                                <!--                    <div class="form-group">-->
-                                <!--                      &lt;!&ndash; Need to add redirect links &ndash;&gt;-->
-                                <!--                      <button type="submit" class="btn btn-primary pull-right">Submit</button> -->
-                                <!--                      <button type="reset" class="btn btn-danger">Reset</button>-->
-                                <!--                    </div>-->
-                                <!--                  </form>-->
+                                <a href="{% url 'event-description' id=notif.target.id %}">{{notif.verb}}</a>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <div class="row">
-
-                    <!-- Area Chart -->
-                    <div class="col-6">
-                        <div class="card shadow mb-4">
-                            <!-- Card Header - Dropdown -->
-                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                <h6 class="m-0 font-weight-bold text-primary">Posts</h6>
-                            </div>
-                            <!-- Card Body -->
-                            <div class="card-body">
-                                {% for event in posts %}
-                                description: {{event.description}}
-                                <br>
-                                <br>
-
-                                {% video event.video as my_video %}
-                                {% video my_video '300x300' %}
-                                {% endvideo %}
-                                {% endfor %}
-                                <!--                  <div class="chart-area">-->
-                                <!--                    <canvas id="myAreaChart"></canvas>-->
-                                <!--                  </div>-->
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Area Chart -->
-                    <div class="col-6">
-                        <div class="card shadow mb-4">
-                            <!-- Card Header - Dropdown -->
-                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                <h6 class="m-0 font-weight-bold text-primary">Upcoming Events</h6>
-                            </div>
-                            <!-- Card Body -->
-                            <div class="card-body text-center">
-                                {% for event in events %}
-                                        <a href="{% url 'event-page' %}{{event.id}}">{{event.title}}</a>
-                                        <br>
-                                        {{ event.description }}
-                                        <br>
-
-                                        {% video event.video as my_video %}
-                                        {% video my_video '450x300' %}
-                                        {% endvideo %}
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </div>
 

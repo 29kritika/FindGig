@@ -1,10 +1,11 @@
 import httplib2
 from django.db.models import Q
 from django.shortcuts import render, redirect
-from .models import User, Event, Post
+from .models import *
 from .forms import *
 from django.http import Http404
 from FindGig.settings import STATICFILES_DIRS
+from notifications.signals import notify
 from django.views.generic import CreateView
 from embed_video.backends import detect_backend
 from googleapiclient import discovery
@@ -230,6 +231,9 @@ def sponsor(request, eventid):
                 Amount=sponsor.Amount,
                 Event=event,
             )
+            verb = user.name + " wishes to sponsor your event " + event.title + "\nAmount: Rs." + sponsor.Amount
+            recipient = event.organiser.user
+            notify.send(user, recipient=recipient, verb=verb, target=event)
             return redirect('/')
         else:
             print("why dude")
@@ -237,6 +241,21 @@ def sponsor(request, eventid):
         form = SponsorForm
     arg = {'form': form}
     return render(request, 'sponsor.html', arg)
+
+
+def perform(request, eventid):
+    socialUser = request.user
+    user = User.objects.get(user=socialUser)
+    event = Event.objects.get(id=eventid)
+    Performer.objects.update_or_create(
+        performer=user,
+        event=event,
+        request_accepted=False
+    )
+    verb = user.name + " wishes to perform at your event " + event.title
+    recipient = event.organiser.user
+    notify.send(user, recipient=recipient, verb=verb, target=event)
+    return redirect('Home')
 
 
 def asettings(request):
@@ -353,12 +372,23 @@ def eventPage(request, id):
 
     event = Event.objects.get(id=id)
     sponsors = Sponsor.objects.all().filter(Event=event)
-    k = True
+    performers = Performer.objects.all().filter(event=event)
+    print(performers)
+    check_sponsor = True
     for s in sponsors:
         if s.sponsor == user:
-            k = False
+            check_sponsor = False
             break
-    args = {'event': event, 'sponsors': sponsors, 'check': k}
+    check_performer = True
+    for p in performers:
+        if p.performer == user:
+            check_performer = False
+            break
+    if event.organiser == user:
+        check_sponsor = False
+        check_performer = False
+    args = {'event': event, 'sponsors': sponsors, 'check_sponsor': check_sponsor, 'check_performer': check_performer,
+            'performers':performers}
     return render(request, 'events/AboutEvent.html', args)
 
 
@@ -385,6 +415,13 @@ def search(request):
 
     return render(request, 'searchresult.html', args)
     # return render(request, 'artists/search-bands.html', {'search_set': list(set(queryset))})
+
+
+def view_notifications(request):
+    socialUser = request.user
+    notifications_list = socialUser.notifications.unread()
+    args = {'notifs': notifications_list}
+    return render(request, 'notif.html', args)
 
 
 # def search_artists():
