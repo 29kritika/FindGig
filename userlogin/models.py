@@ -13,7 +13,8 @@ class User(models.Model):
     name = models.CharField(max_length=255)
     about_text = models.CharField(max_length=500, default='')
     about_link = models.CharField(max_length=50, default='-')
-    gender = models.CharField(max_length=20, default='Not specified', choices=(('female', 'Female'), ('male', 'Male'), ('other', 'Other'), ('not specified', 'Not specified')))
+    gender = models.CharField(max_length=20, default='Not specified', choices=(
+    ('female', 'Female'), ('male', 'Male'), ('other', 'Other'), ('not specified', 'Not specified')))
     city = models.CharField(max_length=50, default='')
     USERNAME_FIELD = 'username'
 
@@ -47,6 +48,7 @@ class Performer(models.Model):
     performer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='performer')
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='performance_event')
     request_accepted = models.BooleanField(default=False)
+    responded = models.BooleanField(default=False)
 
 # class Song(models.Model):
 #     id = models.TextField(max_length=10, unique=True, null=False, db_index=True)

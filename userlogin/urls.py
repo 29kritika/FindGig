@@ -14,7 +14,6 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from . import views
-from django.urls import path
 from django.urls import path, include
 from django.conf.urls import url
 from django.conf import settings
@@ -29,8 +28,9 @@ urlpatterns = [
     path('home/', views.homePage, name='Home'),
     path('signup/', views.signUp, name='Signup'),
     path('logout/', LogoutView.as_view(), {'next_page': settings.LOGOUT_REDIRECT_URL}, name='logout'),
+    path('home/my-profile/', views.view_my_profile, name='view-my-profile'),
+    path('home/new-gigs/', views.new_gigs, name='new-gigs'),
 
-    path('artist-settings/', views.asettings, name='artist-settings'),
     path('change-bio/', views.change_bio, name='change-bio'),
     path('change-city/', views.change_city, name='change-city'),
     path('change-gender/', views.change_gender, name='change-gender'),
@@ -43,9 +43,13 @@ urlpatterns = [
 
     path('home/create-event/', views.createEvent, name='create-event'),
     path('events/', views.allEvents, name='event-page'),
-    url(r'^events/(?P<id>\d+)', views.eventPage, name='event-description'),
-    url(r'^events/request-performance/(?P<eventid>\d+)/', views.perform, name='request-performance'),
-    url('view_profile/(?P<id>\d+)', views.profile, name='view_profile'),
-    url('view_profile/sponsor/(?P<eventid>\d+)', views.sponsor, name='sponsor'),
+    url(r'^events/(?P<id>\d+)/$', views.eventPage, name='event-description'),
+    url(r'^events/request-performance/(?P<eventid>\d+)/$', views.perform, name='request-performance'),
+    url(r'^events/(?P<eventId>\d+)/accept-performer-request/(?P<perfId>\d+)/$', views.acceptPerformer,
+        name='accept-performer-request'),
+    url(r'^events/decline-performer-request/(?P<eventId>\d+)/(?P<perfId>\d+)/$', views.declinePerformer,
+        name='decline-performer-request'),
+    url(r'^view_profile/(?P<id>\d+)/$', views.profile, name='view_profile'),
+    url(r'^view_profile/sponsor/(?P<eventid>\d+)/$', views.sponsor, name='sponsor'),
     path('', views.index),
 ]

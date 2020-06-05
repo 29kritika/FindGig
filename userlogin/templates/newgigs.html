@@ -13,7 +13,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>GigFinder | Dashboard</title>
+    <title>GigFinder | Gigs</title>
 
     <!-- Custom fonts for this template-->
     <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
@@ -46,7 +46,7 @@
         <hr class="sidebar-divider my-0">
 
         <!-- Nav Item - Dashboard -->
-        <li class="nav-item active">
+        <li class="nav-item">
             <a class="nav-link" href="{% url 'Home' %}">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
                 <span>Dashboard</span></a>
@@ -58,7 +58,7 @@
                 <span>Profile</span></a>
         </li>
 
-        <li class="nav-item">
+        <li class="nav-item active">
             <a class="nav-link" href="{% url 'new-gigs' %}">
                 <i class="fas fa-fw fa-bolt"></i>
                 <span>New Gigs</span></a>
@@ -203,145 +203,54 @@
 
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800"> DASHBOARD </h1>
+                    <h1 class="h3 mb-0 text-gray-800"> New gigs near you </h1>
                 </div>
 
                 <hr class="mb-5">
 
                 <!-- Content Row -->
-                <div class="row">
-                    <div class="col-8 mx-auto mb-4">
-
-                        <!-- upload status -->
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary"> Create event </h6>
-                            </div>
-
-                            <div class="card-body">
-                                <form method="POST">
-                                    {% csrf_token %}
-                                    {{form|crispy}}
-                                    <button type="submit">Create</button>
-                                </form>
-                            </div>
-                        </div>
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Gigs</h6>
                     </div>
-                </div>
-
-                <div class="row">
-                    <!-- Posts -->
-                    <div class="col-6">
-                        <div class="card shadow mb-4">
-                            <!-- Card Header - Dropdown -->
-                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                <h6 class="m-0 font-weight-bold text-primary">Posts</h6>
-                            </div>
-                            <!-- Card Body -->
-                            <div class="card-body">
-                                {% for post in posts %}
-                                description: {{post.description}}
-                                <br>
-                                <br>
-
-                                {% video post.video as my_video %}
-                                {% video my_video '300x300' %}
-                                {% endvideo %}
+                    <div class="card-body">
+                        <div class="table-responsive table-borderless">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead class="thead-dark">
+                                <tr>
+                                    <th>Where</th>
+                                    <th>Date</th>
+                                    <th>Starts At</th>
+                                    <th>Ends At</th>
+                                    <th>Link/Know more</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for event in events %}
+                                <tr>
+                                    <td><img class="rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60"
+                                             style="height: 40%"> {{event.venue}}
+                                    </td>
+                                    <td>{{event.date}}</td>
+                                    <td>{{event.startTime}}</td>
+                                    <td>{{event.endTime}}</td>
+                                    <td>
+                                        <a class="btn btn-outline-success" href="{% url 'event-page' %}{{event.id}}">
+                                            Know More
+                                        </a>
+                                    </td>
+                                </tr>
                                 {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Recommended Posts -->
-                    <div class="col-6">
-                        <div class="card shadow mb-4">
-                            <!-- Card Header - Dropdown -->
-                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                <h6 class="m-0 font-weight-bold text-primary">Recommended</h6>
-                            </div>
-                            <!-- Card Body -->
-                            <div class="card-body text-center">
-                                {% for event in recommended %}
-                                Description: {{ event.description }}
-                                <br>
-                                {% video event.video as my_video %}
-                                {% video my_video '300x300' %}
-                                {% endvideo %}
-                                {% endfor %}
-                            </div>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
 
-
-                <!-- DEAD CODE START -->
-                <div style="display:none">
-                    <!-- Content Row -->
-                    <div class="row">
-
-                        <!-- Content Column -->
-                        <div class="col-lg-6 mb-4">
-
-                            <!-- Project Card Example -->
-
-                            <!-- Color System -->
-                            <div class="row">
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card bg-primary text-white shadow">
-                                        <div class="card-body">
-                                            Primary
-                                            <div class="text-white-50 small">#4e73df</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card bg-success text-white shadow">
-                                        <div class="card-body">
-                                            Success
-                                            <div class="text-white-50 small">#1cc88a</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card bg-info text-white shadow">
-                                        <div class="card-body">
-                                            Info
-                                            <div class="text-white-50 small">#36b9cc</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card bg-warning text-white shadow">
-                                        <div class="card-body">
-                                            Warning
-                                            <div class="text-white-50 small">#f6c23e</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card bg-danger text-white shadow">
-                                        <div class="card-body">
-                                            Danger
-                                            <div class="text-white-50 small">#e74a3b</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card bg-secondary text-white shadow">
-                                        <div class="card-body">
-                                            Secondary
-                                            <div class="text-white-50 small">#858796</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- DEAD CODE END -->
             </div>
             <!-- /.container-fluid -->
+
         </div>
-        <!-- End of Main Content -->
 
         <!-- Footer -->
         <footer class="sticky-footer bg-white">

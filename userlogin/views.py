@@ -31,7 +31,7 @@ scopes = [SCOPES]
 
 
 def build_service():
-    credentials = ServiceAccountCredentials.from_json_keyfile_name(filename=CLIENT_SECRET_FILE,scopes=scopes)
+    credentials = ServiceAccountCredentials.from_json_keyfile_name(filename=CLIENT_SECRET_FILE, scopes=scopes)
 
     http = credentials.authorize(httplib2.Http())
 
@@ -40,7 +40,7 @@ def build_service():
     return service
 
 
-def create_event(request,args):
+def create_event(request, args):
     service = build_service()
 
     start_datetime = datetime.datetime.now(tz=pytz.utc)
@@ -53,9 +53,6 @@ def create_event(request,args):
     }).execute()
     print(event)
     return render(request, 'artists/dashboard.html', args)
-
-# _______________________Classes__________________________
-
 
 # ____________________Functions____________________________
 
@@ -82,31 +79,9 @@ def homePage(request):
         user = User.objects.get(user=socialUser)
     except:
         return redirect('Signup')
-    args = {'user': user, }
-    if user.type == 'artist':
-        if request.method == 'POST':
-            form = PostCreationForm(request.POST)
-            if form.is_valid():
-                event = form.save(commit=False)
-                Post.objects.update_or_create(
-                    performer=user,
-                    description=event.description,
-                    video=event.video,
-                )
-                return redirect('Home')
-            else:
-                print("why dude")
-        else:
-            form = PostCreationForm()
-        args['form'] = form
-        posts = Post.objects.all().filter(performer=user)
-        args['posts'] = posts
-        events = Event.objects.all()
-        args['events'] = events
-        # create_event(request, args)
-        return render(request, 'artists/dashboard.html', args)
 
-    if user.type == 'band':
+    args = {'user': user, }
+    if user.type == 'artist' or user.type == 'band':
         if request.method == 'POST':
             form = PostCreationForm(request.POST)
             if form.is_valid():
@@ -126,7 +101,7 @@ def homePage(request):
         args['posts'] = posts
         events = Event.objects.all()
         args['events'] = events
-        return render(request, 'bands/dashboard_band.html', args)
+        return render(request, 'artists/dashboard.html', args)
     if user.type == 'custom user':
         if request.method == 'POST':
             form = PostCreationForm(request.POST)
@@ -147,9 +122,7 @@ def homePage(request):
         args['posts'] = posts
         events = Event.objects.all()
         args['events'] = events
-        return render(request, 'bands/dashboard_band.html', args)
-    # Find the events organised by this user
-    # send it to the html page in order to display his events temporarily
+        return render(request, 'custom/dashboard.html', args)
     try:
         if request.method == 'POST':
             form = EventCreationForm(request.POST)
@@ -172,7 +145,7 @@ def homePage(request):
             form = EventCreationForm()
         args['form'] = form
         events = Event.objects.all().filter(organiser=user)
-        #print(events)
+        # print(events)
         args['events'] = events
         return render(request, 'organisers/dashboard_org.html', args)
     except:
@@ -214,8 +187,23 @@ def profile(request, id):
 
     posts = Post.objects.all().filter(performer=puser)
     args['posts'] = posts
-    args['pusersid']=id
-    return render(request, 'profile_artist_band.html', args)
+    args['pusersid'] = id
+    return render(request, 'artists/profile.html', args)
+
+
+def view_my_profile(request):
+    socialUser = request.user
+    user = User.objects.get(user=socialUser)
+    return profile(request, user.id)
+
+
+def new_gigs(request):
+    socialUser = request.user
+    user = User.objects.get(user=socialUser)
+    events = Event.objects.all()
+    print('events:', events)
+    args = {'user': user, 'events': events}
+    return render(request, 'newgigs.html', args)
 
 
 def sponsor(request, eventid):
@@ -231,7 +219,7 @@ def sponsor(request, eventid):
                 Amount=sponsor.Amount,
                 Event=event,
             )
-            verb = user.name + " wishes to sponsor your event " + event.title + "\nAmount: Rs." + sponsor.Amount
+            verb = user.name + " wishes to sponsor your event " + event.title + "\nAmount: Rs." + str(sponsor.Amount)
             recipient = event.organiser.user
             notify.send(user, recipient=recipient, verb=verb, target=event)
             return redirect('/')
@@ -256,13 +244,6 @@ def perform(request, eventid):
     recipient = event.organiser.user
     notify.send(user, recipient=recipient, verb=verb, target=event)
     return redirect('Home')
-
-
-def asettings(request):
-    socialUser = request.user
-    user = User.objects.get(user=socialUser)
-    checkArtist(user)
-    return render(request, 'artists/asettings.html')
 
 
 def change_bio(request):
@@ -368,11 +349,10 @@ def createEvent(request):
 def eventPage(request, id):
     socialuser = request.user
     user = User.objects.get(user=socialuser)
-    # will be editable for organiser (need to add that)
-
     event = Event.objects.get(id=id)
     sponsors = Sponsor.objects.all().filter(Event=event)
-    performers = Performer.objects.all().filter(event=event)
+    performers = Performer.objects.all().filter(event=event, request_accepted=True)
+    performer_reqs = Performer.objects.all().filter(event=event, responded=False)
     print(performers)
     check_sponsor = True
     for s in sponsors:
@@ -384,11 +364,17 @@ def eventPage(request, id):
         if p.performer == user:
             check_performer = False
             break
+    user_is_org = False
     if event.organiser == user:
         check_sponsor = False
         check_performer = False
+        user_is_org = True
+    print(performer_reqs)
+    for req in performer_reqs:
+        print(req.performer.id)
+        print(req.event.id)
     args = {'event': event, 'sponsors': sponsors, 'check_sponsor': check_sponsor, 'check_performer': check_performer,
-            'performers':performers}
+            'performers': performers, 'user_is_org': user_is_org, 'performer_reqs': performer_reqs, 'user':user}
     return render(request, 'events/AboutEvent.html', args)
 
 
@@ -404,39 +390,59 @@ def search(request):
             Q(about_text__icontains=q) |
             Q(gender__icontains=q) |
             Q(city__icontains=q)
-
         ).distinct()
         for qq in qe:
             queryset.append(qq)
             print(qq)
-
     user = User.objects.get(user=request.user)
     args = {'search_set': list(set(queryset)), 'user': user}
-
     return render(request, 'searchresult.html', args)
-    # return render(request, 'artists/search-bands.html', {'search_set': list(set(queryset))})
 
 
 def view_notifications(request):
     socialUser = request.user
-    notifications_list = socialUser.notifications.unread()
-    args = {'notifs': notifications_list}
+    list1 = socialUser.notifications.unread()
+    list2 = socialUser.notifications.read()
+    list1.mark_all_as_read()
+    args = {'notifs_unread': list1, 'notifs_read': list2}
     return render(request, 'notif.html', args)
 
 
-# def search_artists():
-#     pass
-#
-#
-# def search_events():
-#     pass
-#
-#
-# def search_organisers():
-#     pass
+def acceptPerformer(request, eventId, perfId):
+    socialUser = request.user
+    event = Event.objects.get(id=eventId)
+    print('event;', event)
+    performer_user = User.objects.get(id=perfId)
+    print('performer_user:', performer_user)
+    if event.organiser != user:
+        raise Http404('You are not authenticated to make changes to this event')
+    print('in accept ')
+    p = Performer.objects.filter(event=event, performer=performer_user)
+    for performer in p:
+        performer.request_accepted = True
+        performer.responded = True
+        performer.save()
+
+    for perf in p:
+        print(perf.event.title)
+        print(perf.performer.name)
+        print(perf.request_accepted)
+    return redirect('view-notifications')
+
+
+def declinePerformer(request, eventId, perfId):
+    socialUser = request.user
+    user = User.objects.get(user=socialUser)
+    event = Event.objects.get(id=eventId)
+    performer_user = User.objects.get(id=perfId)
+    if event.organiser != user:
+        raise Http404('You are not authenticated to make changes to this event')
+    performer = Performer.objects.get(event=event, performer=performer_user)
+    performer.request_accepted = False
+    performer.responded = True
+    performer.save()
+    return redirect('view-notifications')
 
 
 def allEvents(request):
     pass
-
-

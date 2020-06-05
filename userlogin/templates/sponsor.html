@@ -1,178 +1,395 @@
 <!DOCTYPE html>
+<html lang="en">
 {% load static %}
 {% load crispy_forms_tags %}
-<html lang="en">
+{% load embed_video_tags %}
+{% load notifications_tags %}
 
 <head>
 
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-  <title>Sponsor Form</title>
+    <title>GigFinder | Settings</title>
 
-  <!-- Custom fonts for this template-->
-  <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
-  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <!-- Custom fonts for this template-->
+    <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+          rel="stylesheet">
 
-  <!-- Custom styles for this template-->
-  <link href="{% static 'css/sb-admin-2.css' %}" rel="stylesheet">
+    <!-- Custom styles for this template-->
+    <link href="{% static 'css/sb-admin-2.css' %}" rel="stylesheet">
 
 </head>
 
-<body style="background-color: #f3f3f3;">
+<body id="page-top">
 
-  <div class="container">
-
-    <div class="card o-hidden border-0 my-5" style="box-shadow: 5px 10px 18px #7AAAF2;    ">
-      <div class="card-body p-0" style="height:80vh;">
-        <!-- Nested Row within Card Body -->
-        <div class="row" style="height:80vh;">
-          <div class="col-lg-7 d-none d-lg-block bg-register-image"></div>
-          <div class="col-lg-4">
-            <div class="p-5">
-<!--              <div class="text-center">-->
-<!--                <h1 class="h4 text-gray-900 mb-4"></h1>-->
-<!--              </div>-->
-
-              <div id="HELLLOO">
-                <div class="w-auto text-center input-group mb-3" style="margin-top: 70%; margin-left:30%;">
-                    <h1>Sponsor Event</h1>
-                  <form method="post">
-                    {% csrf_token %}
-                    {{ form|crispy }}
-                    <button type="submit">Submit</button>
-                  </form>
-<!--                  <p class="mt-2 h5 text-gray-800 mr-3" >You are a </p>-->
-
-<!--                    <button class="mx-2 d-inline btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseBandForm">-->
-<!--                      Band/Artist-->
-<!--                    </button>-->
-
-<!--                    <button class="mx-2 d-inline btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseClubForm">-->
-<!--                      Club/Organiser-->
-<!--                    </button>-->
-
-                </div>
-
-<!--                <div class="accordion-group">-->
-<!--                  <div class="collapse" id="collapseBandForm" data-parent="#HELLLOO">-->
-<!--                    <form class="user">-->
-<!--                      <div class="form-group row">-->
-<!--                        <div class="col-sm-6 mb-3 mb-sm-0">-->
-<!--                          <input type="text" class="form-control form-control-user" id="exampleFirstName" placeholder="First Name">-->
-<!--                        </div>-->
-<!--                        <div class="col-sm-6">-->
-<!--                          <input type="text" class="form-control form-control-user" id="exampleLastName" placeholder="Last Name">-->
-<!--                        </div>-->
-<!--                      </div>-->
-<!--      &lt;!&ndash;                 <div class="form-group">-->
-<!--                        <input type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Email Address">-->
-<!--                      </div> &ndash;&gt;-->
-<!--                      <div class="form-group row">-->
-<!--                        <div class="col-sm-6 mb-3 mb-sm-0">-->
-<!--                          <input type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Password">-->
-<!--                        </div>-->
-<!--                        <div class="col-sm-6">-->
-<!--                          <input type="password" class="form-control form-control-user" id="exampleRepeatPassword" placeholder="Repeat Password">-->
-<!--                        </div>-->
-<!--                      </div>-->
-<!--                      <a href="login.html" class="btn btn-primary btn-user btn-block">-->
-<!--                        Register Account-->
-<!--                      </a>-->
-    <!--                   <hr>
-                      <a href="index.html" class="btn btn-google btn-user btn-block">
-                        <i class="fab fa-google fa-fw"></i> Register with Google
-                      </a>
-                      <a href="index.html" class="btn btn-facebook btn-user btn-block">
-                        <i class="fab fa-facebook-f fa-fw"></i> Register with Facebook
-                      </a> -->
-                    </form>
-                  </div>
+<!-- Page Wrapper -->
+<div id="wrapper">
 
 
-                  <div class="collapse" id="collapseClubForm" data-parent="#HELLLOO">
-                    <form class="user">
-                      <div class="form-group row">
-                        <div class="col-sm-6 mb-3 mb-sm-0">
-                          <input type="text" class="form-control form-control-user" id="exampleFirstName" placeholder="First Name">
-                        </div>
-                        <div class="col-sm-6">
-                          <input type="text" class="form-control form-control-user" id="exampleLastName" placeholder="Last Name">
-                        </div>
-                      </div>
-      <!--                 <div class="form-group">
-                        <input type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Email Address">
-                      </div> -->
-                      <div class="form-group row">
-                        <div class="col-sm-6 mb-3 mb-sm-0">
-                          <input type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Password">
-                        </div>
-                        <div class="col-sm-6">
-                          <input type="password" class="form-control form-control-user" id="exampleRepeatPassword" placeholder="Repeat Password">
-                        </div>
-                      </div>
-                      <a href="login.html" class="btn btn-primary btn-user btn-block">
-                        Register Account
-                      </a>
-    <!--                   <hr>
-                      <a href="index.html" class="btn btn-google btn-user btn-block">
-                        <i class="fab fa-google fa-fw"></i> Register with Google
-                      </a>
-                      <a href="index.html" class="btn btn-facebook btn-user btn-block">
-                        <i class="fab fa-facebook-f fa-fw"></i> Register with Facebook
-                      </a> -->
-                    </form>
-                  </div>
-                </div>
-              </div>
+    <!-- Sidebar -->
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
-
-              <hr>
-<!--               <div class="text-center">
-                <a class="small" href="forgot-password.html">Forgot Password?</a>
-              </div> -->
-<!--              <div class="text-center">-->
-<!--                <a class="small" href="login.html">Already have an account? Login!</a>-->
-<!--              </div>-->
+        <!-- Sidebar - Brand -->
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'Home' %}">
+            <div class="sidebar-brand-icon rotate-n-15">
+                <h2 class="ml-2 fas fa-guitar"></h2>
             </div>
-          </div>
+            <div class="sidebar-brand-text mx-3">GigFinder</div>
+        </a>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider my-0">
+
+        <!-- Nav Item - Dashboard -->
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'Home' %}">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>Dashboard</span></a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'view-my-profile' %}">
+                <i class="fas fa-fw fa-user-alt"></i>
+                <span>Profile</span></a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'new-gigs' %}">
+                <i class="fas fa-fw fa-bolt"></i>
+                <span>New Gigs</span></a>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'view-notifications' %}">
+                <i class="fa fa-bell" aria-hidden="true"></i>
+                <span>Notifications</span> &emsp; {% live_notify_badge %}</a>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+
+        <!-- Nav Item - Pages Collapse Menu -->
+        <li class="nav-item">
+            <a class="nav-link" href="" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true"
+               aria-controls="collapseTwo">
+                <i class="fas fa-fw fa-cog"></i>
+                <span>Settings</span>
+            </a>
+            <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Settings:</h6>
+                    <a class="collapse-item" href="{% url 'change-bio' %}">Update Bio</a>
+                    <a class="collapse-item" href="{% url 'change-name' %}">Update Name</a>
+                </div>
+            </div>
+        </li>
+
+        <hr class="sidebar-divider">
+        <!-- Sidebar Toggler (Sidebar) -->
+        <div class="text-center d-none d-md-inline">
+            <button class="rounded-circle border-0" id="sidebarToggle"></button>
         </div>
-      </div>
+
+    </ul>
+    <!-- End of Sidebar -->
+
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- Main Content -->
+        <div id="content">
+
+            <!-- Topbar -->
+            <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+                <!-- Sidebar Toggle (Topbar) -->
+                <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                    <i class="fa fa-bars"></i>
+                </button>
+
+                <!-- Topbar Search -->
+                <form action="{% url 'search' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        <input type="text" name="q" class="form-control bg-light border-0 small"
+                               placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit" value="submit">
+                                <i class="fas fa-search fa-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Topbar Navbar -->
+                <ul class="navbar-nav ml-auto">
+
+                    <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+                    <li class="nav-item dropdown no-arrow d-sm-none">
+                        <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <!-- Dropdown - Messages -->
+                        <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
+                             aria-labelledby="searchDropdown">
+                            <form class="form-inline mr-auto w-100 navbar-search">
+                                <div class="input-group">
+                                    <input type="text" class="form-control bg-light border-0 small"
+                                           placeholder="Search for..." aria-label="Search"
+                                           aria-describedby="basic-addon2">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary" type="button">
+                                            <i class="fas fa-search fa-sm"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </li>
+
+
+
+
+                    <div class="topbar-divider d-none d-sm-block"></div>
+
+                    <!-- Nav Item - User Information -->
+                    <li class="nav-item dropdown no-arrow">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ user.name }}</span>
+                            <img class="img-profile rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60">
+                        </a>
+                        <!-- Dropdown - User Information -->
+                        <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                             aria-labelledby="userDropdown">
+                            <a class="dropdown-item" href="{% url 'Home' %}">
+                                <i class="fas fa-tachometer-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                Dashboard
+                            </a>
+                            <a class="dropdown-item" href="{% url 'view-my-profile' %}">
+                                <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                Profile
+                            </a>
+                            <a class="dropdown-item" href="{% url 'new-gigs' %}">
+                                <i class="fas fa-bolt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                New Gigs
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{% url 'logout' %}" data-toggle="modal"
+                               data-target="#logoutModal">
+                                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                Logout
+                            </a>
+                        </div>
+                    </li>
+
+                </ul>
+
+            </nav>
+            <!-- End of Topbar -->
+
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800"> SPONSORSHIP FORM </h1>
+                </div>
+
+                <hr class="mb-5">
+
+                <!-- Content Row -->
+                <div class="row">
+                    <div class="col-8 mx-auto mb-4">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary"> Sponsor Event </h6>
+                            </div>
+
+                            <div class="card-body">
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    {{form|crispy}}
+                                    <input class="btn btn-primary" type="submit" value="Submit">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DEAD CODE START -->
+                <div style="display:none">
+                    <!-- Content Row -->
+                    <div class="row">
+
+                        <!-- Content Column -->
+                        <div class="col-lg-6 mb-4">
+
+                            <!-- Project Card Example -->
+
+                            <!-- Color System -->
+                            <div class="row">
+                                <div class="col-lg-6 mb-4">
+                                    <div class="card bg-primary text-white shadow">
+                                        <div class="card-body">
+                                            Primary
+                                            <div class="text-white-50 small">#4e73df</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 mb-4">
+                                    <div class="card bg-success text-white shadow">
+                                        <div class="card-body">
+                                            Success
+                                            <div class="text-white-50 small">#1cc88a</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 mb-4">
+                                    <div class="card bg-info text-white shadow">
+                                        <div class="card-body">
+                                            Info
+                                            <div class="text-white-50 small">#36b9cc</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 mb-4">
+                                    <div class="card bg-warning text-white shadow">
+                                        <div class="card-body">
+                                            Warning
+                                            <div class="text-white-50 small">#f6c23e</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 mb-4">
+                                    <div class="card bg-danger text-white shadow">
+                                        <div class="card-body">
+                                            Danger
+                                            <div class="text-white-50 small">#e74a3b</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 mb-4">
+                                    <div class="card bg-secondary text-white shadow">
+                                        <div class="card-body">
+                                            Secondary
+                                            <div class="text-white-50 small">#858796</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- DEAD CODE END -->
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span>Copyright &copy; GigFinder 2020</span>
+                </div>
+            </div>
+        </footer>
+        <!-- End of Footer -->
+
     </div>
+    <!-- End of Content Wrapper -->
 
-  </div>
+</div>
+<!-- End of Page Wrapper -->
 
-  <!-- Bootstrap core JavaScript-->
-  <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
-  <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
 
-  <!-- Core plugin JavaScript-->
-  <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+<!-- Logout Modal-->
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-primary" href="{% url 'logout' %}">Logout</a>
+            </div>
+        </div>
+    </div>
+</div>
 
-  <!-- Custom scripts for all pages-->
-  <script src="{% static 'js/sb-admin-2.min.js' %}"></script>
+<!-- Bootstrap core JavaScript-->
+<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 
+<!-- Core plugin JavaScript-->
+<script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="{% static 'js/sb-admin-2.min.js' %}"></script>
+
+<!-- Page level plugins -->
+<script src="{% static 'vendor/chart.js/Chart.min.js' %}"></script>
+
+<!-- Page level custom scripts -->
+<script src="{% static 'js/demo/chart-area-demo.js' %}"></script>
+<script src="{% static 'js/demo/chart-pie-demo.js' %}"></script>
+
+<script type="text/javascript">
+  //Status update js
+  function bs_input_file() {
+  $(".input-file").before(
+    function() {
+      if ( ! $(this).prev().hasClass('input-ghost') ) {
+        var element = $("<input type='file' class='input-ghost' style='visibility:hidden; height:0'>");
+        element.attr("name",$(this).attr("name"));
+        element.change(function(){
+          element.next(element).find('input').val((element.val()).split('\\').pop());
+        });
+        $(this).find("button.btn-choose").click(function(){
+          element.click();
+        });
+        $(this).find("button.btn-reset").click(function(){
+          element.val(null);
+          $(this).parents(".input-file").find('input').val('');
+        });
+        $(this).find('input').css("cursor","pointer");
+        $(this).find('input').mousedown(function() {
+          $(this).parents('.input-file').prev().click();
+          return false;
+        });
+        return element;
+      }
+    }
+  );
+}
+$(function() {
+  bs_input_file();
+});
+
+
+
+</script>
 </body>
 
 </html>
-<!--<!doctype html>-->
-<!--<html lang="en">-->
-<!--<head>-->
-<!--  <meta charset="utf-8">-->
-<!--  <title>GigFinder</title>-->
-<!--  <link-->
-<!--    rel="stylesheet"-->
-<!--    href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"-->
-<!--    integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"-->
-<!--    crossorigin="anonymous">-->
-<!--</head>-->
-<!--<body>-->
-<!--  <div class="jumbotron">-->
-<!--    <h1>GigFinder</h1>-->
-
-<!--  </div>-->
-<!--</body>-->
-<!--</html>-->

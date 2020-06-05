@@ -13,7 +13,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>GigFinder | Dashboard</title>
+    <title>Profile</title>
 
     <!-- Custom fonts for this template-->
     <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
@@ -30,7 +30,6 @@
 <!-- Page Wrapper -->
 <div id="wrapper">
 
-
     <!-- Sidebar -->
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
@@ -46,13 +45,13 @@
         <hr class="sidebar-divider my-0">
 
         <!-- Nav Item - Dashboard -->
-        <li class="nav-item active">
+        <li class="nav-item">
             <a class="nav-link" href="{% url 'Home' %}">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
                 <span>Dashboard</span></a>
         </li>
 
-        <li class="nav-item">
+        <li class="nav-item active">
             <a class="nav-link" href="{% url 'view-my-profile' %}">
                 <i class="fas fa-fw fa-user-alt"></i>
                 <span>Profile</span></a>
@@ -139,26 +138,7 @@
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-search fa-fw"></i>
                         </a>
-                        <!-- Dropdown - Messages -->
-                        <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-                             aria-labelledby="searchDropdown">
-                            <form class="form-inline mr-auto w-100 navbar-search">
-                                <div class="input-group">
-                                    <input type="text" class="form-control bg-light border-0 small"
-                                           placeholder="Search for..." aria-label="Search"
-                                           aria-describedby="basic-addon2">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-primary" type="button">
-                                            <i class="fas fa-search fa-sm"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
                     </li>
-
-
-
 
                     <div class="topbar-divider d-none d-sm-block"></div>
 
@@ -203,75 +183,45 @@
 
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800"> DASHBOARD </h1>
+                    <h1 class="h3 mb-0 text-gray-800"> {{puser.name}} (@{{puser.username}}) </h1>
                 </div>
 
                 <hr class="mb-5">
 
                 <!-- Content Row -->
                 <div class="row">
-                    <div class="col-8 mx-auto mb-4">
-
-                        <!-- upload status -->
+                    <div class="col-xl-8 col-lg-7">
                         <div class="card shadow mb-4">
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary"> Create event </h6>
-                            </div>
-
-                            <div class="card-body">
-                                <form method="POST">
-                                    {% csrf_token %}
-                                    {{form|crispy}}
-                                    <button type="submit">Create</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <!-- Posts -->
-                    <div class="col-6">
-                        <div class="card shadow mb-4">
-                            <!-- Card Header - Dropdown -->
                             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                <h6 class="m-0 font-weight-bold text-primary">Posts</h6>
+                                <h6 class="m-0 font-weight-bold text-primary">
+                                <a href="{% url 'event-page' %}{{event.id}}">Posts</a></h6>
                             </div>
-                            <!-- Card Body -->
+                            {% for event in posts %}
                             <div class="card-body">
-                                {% for post in posts %}
-                                description: {{post.description}}
-                                <br>
-                                <br>
-
-                                {% video post.video as my_video %}
-                                {% video my_video '300x300' %}
-                                {% endvideo %}
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Recommended Posts -->
-                    <div class="col-6">
-                        <div class="card shadow mb-4">
-                            <!-- Card Header - Dropdown -->
-                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                <h6 class="m-0 font-weight-bold text-primary">Recommended</h6>
-                            </div>
-                            <!-- Card Body -->
-                            <div class="card-body text-center">
-                                {% for event in recommended %}
-                                Description: {{ event.description }}
-                                <br>
+                                Title: <a href="{% url 'event-page' %}{{event.id}}">{{event.title}}</a>
+                                <br> Promo: <br>
                                 {% video event.video as my_video %}
-                                {% video my_video '300x300' %}
+                                {% video my_video '600x450' %}
                                 {% endvideo %}
-                                {% endfor %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-5">
+                        <div class="card shadow mb-4">
+                            <!-- Card Header - Dropdown -->
+                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0 font-weight-bold text-primary">About</h6>
+                            </div>
+                            <!-- Card Body -->
+                            <div class="card-body">
+                                {{user.type}} account <br>
+                                Website: <a href="{{ puser.about_link }}">{{puser.about_link}}</a> <br>
+                                Bio: {{ puser.about_text }}
                             </div>
                         </div>
                     </div>
                 </div>
-
 
                 <!-- DEAD CODE START -->
                 <div style="display:none">
