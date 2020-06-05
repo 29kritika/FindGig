@@ -31,6 +31,9 @@ urlpatterns = [
     path('home/my-profile/', views.view_my_profile, name='view-my-profile'),
     path('home/new-gigs/', views.new_gigs, name='new-gigs'),
 
+    url(r'^home/like-post/(?P<postid>\d+)/$', views.like_post, name='like-post'),
+    url(r'^home/dislike-post/(?P<postid>\d+)/$', views.dislike_post, name='dislike-post'),
+
     path('change-bio/', views.change_bio, name='change-bio'),
     path('change-city/', views.change_city, name='change-city'),
     path('change-gender/', views.change_gender, name='change-gender'),
@@ -41,9 +44,9 @@ urlpatterns = [
     path('home/search/method="POST"', views.search, name='search1'),
     path('home/notifications/', views.view_notifications, name='view-notifications'),
 
-    path('home/create-event/', views.createEvent, name='create-event'),
     path('events/', views.allEvents, name='event-page'),
     url(r'^events/(?P<id>\d+)/$', views.eventPage, name='event-description'),
+    url(r'^events/(?P<eventid>\d+)/add-to-calendar/$', views.add_to_calendar, name='add-to-cal'),
     url(r'^events/request-performance/(?P<eventid>\d+)/$', views.perform, name='request-performance'),
     url(r'^events/(?P<eventId>\d+)/accept-performer-request/(?P<perfId>\d+)/$', views.acceptPerformer,
         name='accept-performer-request'),

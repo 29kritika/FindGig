@@ -251,10 +251,13 @@
                                 venue: {{event.venue}}<br>
                                 date: {{event.date}}<br>
                                 from: {{event.startTime}} to {{event.endTime}}<br>
+                                {% if check_sponsor %}
                                 <a href="{% url 'sponsor' eventid=event.id %}">Sponsor this event</a> <br>
+                                {% endif %}
                                 {% if check_performer %}
                                 <a href="{% url 'request-performance' eventid=event.id %}">Request to perform at this event</a> <br>
                                 {% endif %}
+                                <a href="{{event.calendar_link}}">Add to calendar</a>
                             </div>
                         </div>
                     </div>

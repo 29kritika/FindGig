@@ -239,14 +239,24 @@
                             </div>
                             <!-- Card Body -->
                             <div class="card-body">
-                                {% for post in posts %}
-                                description: {{post.description}}
+                                {% for event, liked, disliked in posts %}
+                                <h3>@{{event.performer.username}}</h3>
+                                Genre: {{event.description}}
                                 <br>
                                 <br>
-
-                                {% video post.video as my_video %}
-                                {% video my_video '300x300' %}
-                                {% endvideo %}
+                                {% video event.video as my_video %}
+                                {% video my_video '600x450' %}
+                                {% endvideo %}<br>
+                                <a href="{% url 'like-post' postid=event.id %}"><i class="fa fa-thumbs-up"></i></a>
+                                &emsp;&emsp;&emsp;
+                                {% if liked %}
+                                Liked
+                                {% endif %}
+                                {% if disliked %}
+                                Disliked
+                                {% endif %}
+                                &emsp;&emsp;&emsp;
+                                <a href="{% url 'dislike-post' postid=event.id %}"><i class="fa fa-thumbs-down"></i></a>
                                 {% endfor %}
                             </div>
                         </div>
@@ -260,12 +270,23 @@
                             </div>
                             <!-- Card Body -->
                             <div class="card-body text-center">
-                                {% for event in recommended %}
-                                Description: {{ event.description }}
+                                {% for event, liked, disliked in recommended %}
+                                description: {{event.description}}
+                                <br>
                                 <br>
                                 {% video event.video as my_video %}
-                                {% video my_video '300x300' %}
-                                {% endvideo %}
+                                {% video my_video '600x450' %}
+                                {% endvideo %}<br>
+                                <a href="{% url 'like-post' postid=event.id %}"><i class="fa fa-thumbs-up"></i></a>
+                                &emsp;&emsp;&emsp;
+                                {% if liked %}
+                                Liked
+                                {% endif %}
+                                {% if disliked %}
+                                Disliked
+                                {% endif %}
+                                &emsp;&emsp;&emsp;
+                                <a href="{% url 'dislike-post' postid=event.id %}"><i class="fa fa-thumbs-down"></i></a>
                                 {% endfor %}
                             </div>
                         </div>

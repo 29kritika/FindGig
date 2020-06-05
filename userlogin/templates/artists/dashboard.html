@@ -23,6 +23,7 @@
     <!-- Custom styles for this template-->
     <link href="{% static 'css/sb-admin-2.css' %}" rel="stylesheet">
 
+
 </head>
 
 <body id="page-top">
@@ -222,7 +223,7 @@
                                 <form method="POST">
                                     {% csrf_token %}
                                     {{form|crispy}}
-                                    <button type="submit">Post</button>
+                                    <input class="btn btn-primary" type="submit" value="Post">
                                 </form>
                             </div>
                         </div>
@@ -238,13 +239,24 @@
                                 <h6 class="m-0 font-weight-bold text-primary">Posts</h6>
                             </div>
                             <div class="card-body">
-                                {% for event in posts %}
-                                description: {{event.description}}
+                                {% for event, liked, disliked in posts %}
+                                <h3>@{{event.performer.username}}</h3>
+                                Genre: {{event.description}}
                                 <br>
                                 <br>
                                 {% video event.video as my_video %}
-                                {% video my_video '300x300' %}
-                                {% endvideo %}
+                                {% video my_video '600x450' %}
+                                {% endvideo %}<br>
+                                <a href="{% url 'like-post' postid=event.id %}"><i class="fa fa-thumbs-up"></i></a>
+                                &emsp;&emsp;&emsp;
+                                {% if liked %}
+                                Liked
+                                {% endif %}
+                                {% if disliked %}
+                                Disliked
+                                {% endif %}
+                                &emsp;&emsp;&emsp;
+                                <a href="{% url 'dislike-post' postid=event.id %}"><i class="fa fa-thumbs-down"></i></a>
                                 {% endfor %}
                             </div>
                         </div>
@@ -259,13 +271,23 @@
                             </div>
                             <!-- Card Body -->
                             <div class="card-body text-center">
-                                {% for event in recommended %}
+                                {% for event, liked, disliked in recommended %}
                                 description: {{event.description}}
                                 <br>
                                 <br>
                                 {% video event.video as my_video %}
-                                {% video my_video '300x300' %}
-                                {% endvideo %}
+                                {% video my_video '600x450' %}
+                                {% endvideo %}<br>
+                                <a href="{% url 'like-post' postid=event.id %}"><i class="fa fa-thumbs-up"></i></a>
+                                &emsp;&emsp;&emsp;
+                                {% if liked %}
+                                Liked
+                                {% endif %}
+                                {% if disliked %}
+                                Disliked
+                                {% endif %}
+                                &emsp;&emsp;&emsp;
+                                <a href="{% url 'dislike-post' postid=event.id %}"><i class="fa fa-thumbs-down"></i></a>
                                 {% endfor %}
                             </div>
                         </div>

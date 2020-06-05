@@ -1,58 +1,63 @@
-import httplib2
-from django.db.models import Q
+import os
+import pickle
+
+import pytz
+from django.db.models import Q, Count
 from django.shortcuts import render, redirect
+from google.auth.transport.requests import Request
+
 from .models import *
 from .forms import *
 from django.http import Http404
 from FindGig.settings import STATICFILES_DIRS
 from notifications.signals import notify
-from django.views.generic import CreateView
-from embed_video.backends import detect_backend
-from googleapiclient import discovery
-from oauth2client import tools
-from oauth2client.client import OAuth2WebServerFlow
-from oauth2client.file import Storage
-import http.client
-import os
-from datetime import timedelta
-import datetime
-import pytz
-
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics import euclidean_distances
+import pandas as pd
+import numpy as np
 import httplib2
-from googleapiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
-
-service_account_email = 'findgig@gogig-274207.iam.gserviceaccount.com'
-
-CLIENT_SECRET_FILE = STATICFILES_DIRS[0] + 'gogig-274207-3c74826599ce.json'
-
-SCOPES = 'https://www.googleapis.com/auth/calendar'
-scopes = [SCOPES]
+from googleapiclient.discovery import build
+from httplib2 import Http
+from oauth2client import file, client, tools
+from google_auth_oauthlib.flow import InstalledAppFlow
+from datetime import datetime, timedelta
 
 
-def build_service():
-    credentials = ServiceAccountCredentials.from_json_keyfile_name(filename=CLIENT_SECRET_FILE, scopes=scopes)
-
-    http = credentials.authorize(httplib2.Http())
-
-    service = build('calendar', 'v3', http=http)
-
-    return service
-
-
-def create_event(request, args):
-    service = build_service()
-
-    start_datetime = datetime.datetime.now(tz=pytz.utc)
-    event = service.events().insert(calendarId='primary', body={
-        'summary': 'Foo',
-        'description': 'Bar',
+def create_event(event):
+    SCOPES = "https://www.googleapis.com/auth/calendar"
+    creds = None
+    if os.path.exists('token.pickle'):
+        with open('token.pickle', 'rb') as token:
+            creds = pickle.load(token)
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                STATICFILES_DIRS[0] + 'credentials.json', SCOPES)
+            creds = flow.run_local_server(port=0)
+        # Save the credentials for the next run
+        with open('token.pickle', 'wb') as token:
+            pickle.dump(creds, token)
+    service = build('calendar', 'v3', credentials=creds)
+    start_datetime = datetime.now(tz=pytz.timezone('Asia/Kolkata'))
+    end_datetime = datetime.now(tz=pytz.timezone('Asia/Kolkata'))
+    start_datetime = start_datetime.replace(year=event.date.year, month=event.date.month, day=event.date.day, hour=event.startTime.hour,
+                           minute=event.startTime.minute)
+    print(start_datetime)
+    end_datetime = end_datetime.replace(year=event.date.year, month=event.date.month, day=event.date.day, hour=event.endTime.hour,
+                         minute=event.endTime.minute)
+    body = {
+        'summary': event.title,
+        'description': event.description,
         'start': {'dateTime': start_datetime.isoformat()},
-        'end': {'dateTime': (start_datetime + timedelta(minutes=15)).isoformat()},
-        # add attendees
-    }).execute()
-    print(event)
-    return render(request, 'artists/dashboard.html', args)
+        'end': {'dateTime': end_datetime.isoformat()},
+    }
+    cal_event = service.events().insert(calendarId='primary', body=body).execute()
+    print(f"The event has been created! View it at {cal_event.get('htmlLink')}!")
+    return cal_event.get('htmlLink')
+
 
 # ____________________Functions____________________________
 
@@ -73,14 +78,36 @@ def checkOrganiser(user):
     raise Http404('not allowed ')
 
 
+def get_posts(user, givenposts):
+    liked_posts = RatedPost.objects.filter(liked=True, viewer=user)
+    disliked_posts = RatedPost.objects.filter(liked=False, viewer=user)
+    posts = []
+    for post in givenposts:
+        print(liked_posts)
+        print(disliked_posts)
+        if liked_posts.filter(posts=post).count() == 0:
+            liked = False
+        else:
+            liked = True
+        if disliked_posts.filter(posts=post).count() == 0:
+            disliked = False
+        else:
+            disliked = True
+        posts.append((post, liked, disliked))
+    return posts
+
+
 def homePage(request):
     socialUser = request.user
     try:
         user = User.objects.get(user=socialUser)
     except:
         return redirect('Signup')
-
     args = {'user': user, }
+    posts = Post.objects.all()
+    args['posts'] = get_posts(user, posts)
+    recommended = related_post(user)
+    args['recommended'] = get_posts(user, recommended)
     if user.type == 'artist' or user.type == 'band':
         if request.method == 'POST':
             form = PostCreationForm(request.POST)
@@ -97,10 +124,6 @@ def homePage(request):
         else:
             form = PostCreationForm()
         args['form'] = form
-        posts = Post.objects.all().filter(performer=user)
-        args['posts'] = posts
-        events = Event.objects.all()
-        args['events'] = events
         return render(request, 'artists/dashboard.html', args)
     if user.type == 'custom user':
         if request.method == 'POST':
@@ -118,39 +141,29 @@ def homePage(request):
         else:
             form = PostCreationForm()
         args['form'] = form
-        posts = Post.objects.all().filter(performer=user)
-        args['posts'] = posts
-        events = Event.objects.all()
-        args['events'] = events
         return render(request, 'custom/dashboard.html', args)
-    try:
-        if request.method == 'POST':
-            form = EventCreationForm(request.POST)
-            if form.is_valid():
-                event = form.save(commit=False)
-                Event.objects.update_or_create(
-                    organiser=user,
-                    title=event.title,
-                    description=event.description,
-                    venue=event.venue,
-                    date=event.date,
-                    startTime=event.startTime,
-                    endTime=event.endTime,
-                    video=event.video,
-                )
-                return redirect('Home')
-            else:
-                print("why dude")
+    if request.method == 'POST':
+        form = EventCreationForm(request.POST)
+        if form.is_valid():
+            event = form.save(commit=False)
+            link = create_event(event)
+            Event.objects.update_or_create(
+                organiser=user,
+                title=event.title,
+                description=event.description,
+                venue=event.venue,
+                date=event.date,
+                startTime=event.startTime,
+                endTime=event.endTime,
+                video=event.video,
+                calendar_link=link
+            )
+            return redirect('Home')
         else:
-            form = EventCreationForm()
-        args['form'] = form
-        events = Event.objects.all().filter(organiser=user)
-        # print(events)
-        args['events'] = events
-        return render(request, 'organisers/dashboard_org.html', args)
-    except:
-        print('something')
-        pass
+            print("why dude")
+    else:
+        form = EventCreationForm()
+    args['form'] = form
     return render(request, 'organisers/dashboard_org.html', args)
 
 
@@ -184,9 +197,10 @@ def profile(request, id):
         events = Event.objects.all().filter(organiser=puser)
         args['events'] = events
         return render(request, 'organisers/profile_org.html', args)
-
+    if puser.type == 'custom user':
+        return render(request, 'custom/profile.html', args)
     posts = Post.objects.all().filter(performer=puser)
-    args['posts'] = posts
+    args['posts'] = get_posts(user, posts)
     args['pusersid'] = id
     return render(request, 'artists/profile.html', args)
 
@@ -319,33 +333,6 @@ def change_gender(request):
     return render(request, 'change_info.html', arg)
 
 
-def createEvent(request):
-    socialUser = request.user
-    user = User.objects.get(user=socialUser)
-    checkOrganiser(user)
-    if request.method == 'POST':
-        form = EventCreationForm(request.POST)
-        if form.is_valid():
-            event = form.save(commit=False)
-            Event.objects.update_or_create(
-                organiser=user,
-                title=event.title,
-                description=event.description,
-                venue=event.venue,
-                date=event.date,
-                startTime=event.startTime,
-                endTime=event.endTime,
-                video=event.video,
-            )
-            return redirect('Home')
-        else:
-            print("why dude")
-    else:
-        form = EventCreationForm()
-    args = {'form': form, }
-    return render(request, 'organisers/createEvent.html', args)
-
-
 def eventPage(request, id):
     socialuser = request.user
     user = User.objects.get(user=socialuser)
@@ -410,6 +397,7 @@ def view_notifications(request):
 
 def acceptPerformer(request, eventId, perfId):
     socialUser = request.user
+    user = User.objects.get(user=socialUser)
     event = Event.objects.get(id=eventId)
     print('event;', event)
     performer_user = User.objects.get(id=perfId)
@@ -422,6 +410,8 @@ def acceptPerformer(request, eventId, perfId):
         performer.request_accepted = True
         performer.responded = True
         performer.save()
+        verb = 'Your request to perform at ' + event.title + 'has been accepted'
+        notify.send(user, recipient=performer.performer.user, verb=verb, target=event)
 
     for perf in p:
         print(perf.event.title)
@@ -437,11 +427,83 @@ def declinePerformer(request, eventId, perfId):
     performer_user = User.objects.get(id=perfId)
     if event.organiser != user:
         raise Http404('You are not authenticated to make changes to this event')
-    performer = Performer.objects.get(event=event, performer=performer_user)
-    performer.request_accepted = False
-    performer.responded = True
-    performer.save()
+    p = Performer.objects.filter(event=event, performer=performer_user)
+    for performer in p:
+        performer.request_accepted = False
+        performer.responded = True
+        performer.save()
+        verb = 'Your request to perform at ' + event.title + 'has been declined'
+        notify.send(user, recipient=performer.performer.user, verb=verb, target=event)
     return redirect('view-notifications')
+
+
+def related_post(user):
+    rp = list(RatedPost.objects.all().filter(viewer=user, liked=True).values('posts__description'))
+    print(rp)
+    nl_rp = list(RatedPost.objects.all().filter(viewer=user, liked=False).values('posts__description'))
+    queryset = []
+    lw=[]
+    ulw=[]
+    for i in rp:
+        lw.extend(i['posts__description'].split(" "))
+    lw=list(set(lw))
+    for i in nl_rp:
+        ulw.extend(i['posts__description'].split(" "))
+    ulw=list(set(ulw))
+
+    for q in lw:
+        if q not in ulw:
+            qe = Post.objects.all()
+            qe = qe.filter(
+                Q(description__icontains=q) |
+                Q(performer__about_text__icontains=q) |
+                Q(performer__name__icontains=q)
+            ).distinct()
+            for qq in qe:
+                queryset.append(qq)
+                print(qq)
+    queryset=list(set(queryset))
+    return queryset
+
+
+def like_post(request, postid):
+    socialUser = request.user
+    user = User.objects.get(user=socialUser)
+    post = Post.objects.get(id=postid)
+    try:
+        query = RatedPost.objects.get(posts=post, viewer=user)
+        query.liked = True
+        query.save()
+    except:
+        RatedPost.objects.update_or_create(
+            viewer=user,
+            liked=True,
+            posts=post
+        )
+    return redirect('Home')
+
+
+def dislike_post(request, postid):
+    socialUser = request.user
+    user = User.objects.get(user=socialUser)
+    post = Post.objects.get(id=postid)
+    try:
+        query = RatedPost.objects.get(posts=post, viewer=user)
+        query.liked = False
+        query.save()
+    except:
+        RatedPost.objects.update_or_create(
+            viewer=user,
+            liked=False,
+            posts=post
+        )
+    return redirect('Home')
+
+
+def add_to_calendar(request, eventid):
+    event = Event.objects.get(id=eventid)
+    create_event(event)
+    return redirect('Home')
 
 
 def allEvents(request):

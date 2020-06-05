@@ -28,7 +28,7 @@ class Event(models.Model):
     startTime = models.TimeField()
     endTime = models.TimeField()
     video = EmbedVideoField(default='')
-    # dateTime = models.DateTimeField(auto_now=True) not able to get this value
+    calendar_link = models.CharField(max_length=500, default='')
 
 
 class Sponsor(models.Model):
@@ -50,20 +50,8 @@ class Performer(models.Model):
     request_accepted = models.BooleanField(default=False)
     responded = models.BooleanField(default=False)
 
-# class Song(models.Model):
-#     id = models.TextField(max_length=10, unique=True, null=False, db_index=True)
-#     name = models.TextField(max_length=200, null=False)
-#     Genre = models.TextField(max_length=200, null=False)
-#
-#
-# class Relation(models.Model):
-#     singer = models.ForeignKey(Profile, on_delete=models.CASCADE)
-#     song_sang = models.ForeignKey(Song, on_delete=models.CASCADE)
-#
-# class Timeline(models.Model):
-#     from_t = models.ForeignKey(User, on_delete=models.CASCADE, related_name="from_t1")
-#     to_t = models.ForeignKey(User, on_delete=models.CASCADE, related_name="to_t2")
-#     post = models.CharField(max_length=2500)
-#     datetime = models.DateTimeField(auto_now=True)
-#     privacy = models.BooleanField(default=False)
-#     selfp = models.BooleanField(default=True)
+
+class RatedPost(models.Model):
+    viewer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='viewer2')
+    posts = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='post2')
+    liked = models.BooleanField(default=True)
