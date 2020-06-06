@@ -218,7 +218,8 @@
                             </div>
                             <div class="card-body">
                                 {% for event, liked, disliked in posts %}
-                                <h3>@{{event.performer.username}}</h3>
+                                <h3><a href="{% url 'view_profile' id=event.performer.id %}">
+                                    @{{event.performer.username}}</a></h3>
                                 Genre: {{event.description}}
                                 <br>
                                 <br>
@@ -250,7 +251,8 @@
                             <!-- Card Body -->
                             <div class="card-body text-center">
                                 {% for event, liked, disliked in recommended %}
-                                <h3>@{{event.performer.username}}</h3>
+                                <h3><a href="{% url 'view_profile' id=event.performer.id %}">
+                                    @{{event.performer.username}}</a></h3>
                                 Genre: {{event.description}}
                                 <br>
                                 <br>

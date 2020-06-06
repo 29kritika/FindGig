@@ -198,7 +198,7 @@
                             </div>
                             <div class="card-body">
                                 {% for event, liked, disliked in posts %}
-                                Genre: <a href="{% url 'event-page' %}{{event.id}}">{{event.title}}</a>
+                                Genre: {{event.description}}
                                 <br> <br>
                                 {% video event.video as my_video %}
                                 {% video my_video '600x450' %}

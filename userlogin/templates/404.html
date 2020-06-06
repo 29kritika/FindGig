@@ -13,7 +13,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>GigFinder | Dashboard</title>
+    <title>404 Error</title>
 
     <!-- Custom fonts for this template-->
     <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
@@ -22,7 +22,6 @@
 
     <!-- Custom styles for this template-->
     <link href="{% static 'css/sb-admin-2.css' %}" rel="stylesheet">
-
 
 </head>
 
@@ -47,7 +46,7 @@
         <hr class="sidebar-divider my-0">
 
         <!-- Nav Item - Dashboard -->
-        <li class="nav-item active">
+        <li class="nav-item">
             <a class="nav-link" href="{% url 'Home' %}">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
                 <span>Dashboard</span></a>
@@ -159,8 +158,6 @@
                     </li>
 
 
-
-
                     <div class="topbar-divider d-none d-sm-block"></div>
 
                     <!-- Nav Item - User Information -->
@@ -203,206 +200,59 @@
             <div class="container-fluid">
 
                 <!-- Page Heading -->
-                <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800"> DASHBOARD </h1>
-                </div>
+                <div class="container-fluid">
 
-                <hr class="mb-5">
-
-                <!-- Content Row -->
-                <div class="row">
-                    <div class="col-8 mx-auto mb-4">
-
-                        <!-- upload status -->
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary"> Post a Performance </h6>
-                            </div>
-
-                            <div class="card-body">
-                                <form method="POST">
-                                    {% csrf_token %}
-                                    {{form|crispy}}
-                                    <input class="btn btn-primary" type="submit" value="Post">
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Content Row -->
-
-                <div class="row">
-                    <div class="col-6">
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                <h6 class="m-0 font-weight-bold text-primary">Posts</h6>
-                            </div>
-                            <div class="card-body">
-                                {% for event, liked, disliked in posts %}
-                                <h3><a href="{% url 'view_profile' id=event.performer.id %}">
-                                    @{{event.performer.username}}</a></h3>
-                                Genre: {{event.description}}
-                                <br>
-                                <br>
-                                {% video event.video as my_video %}
-                                {% video my_video '600x450' %}
-                                {% endvideo %}<br>
-                                <a href="{% url 'like-post' postid=event.id %}"><i class="fa fa-thumbs-up"></i></a>
-                                &emsp;&emsp;&emsp;
-                                {% if liked %}
-                                Liked
-                                {% endif %}
-                                {% if disliked %}
-                                Disliked
-                                {% endif %}
-                                &emsp;&emsp;&emsp;
-                                <a href="{% url 'dislike-post' postid=event.id %}"><i class="fa fa-thumbs-down"></i></a>
-                                {% endfor %}
-                            </div>
-                        </div>
+                    <!-- 404 Error Text -->
+                    <div class="text-center">
+                        <div class="error mx-auto" data-text="404">404</div>
+                        <p class="lead text-gray-800 mb-5">Page Not Found</p>
+                        <p class="text-gray-500 mb-0">{{exception}}</p>
+                        <p class="text-gray-500 mb-0">It looks like you found a glitch in the matrix...</p>
+                        <a href="{% url 'Home' %}">&larr; Back to Dashboard</a>
                     </div>
 
-                    <!-- Area Chart -->
-                    <div class="col-6">
-                        <div class="card shadow mb-4">
-                            <!-- Card Header - Dropdown -->
-                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                <h6 class="m-0 font-weight-bold text-primary">Recommended</h6>
-                            </div>
-                            <!-- Card Body -->
-                            <div class="card-body text-center">
-                                {% for event, liked, disliked in recommended %}
-                                <h3><a href="{% url 'view_profile' id=event.performer.id %}">
-                                    @{{event.performer.username}}</a></h3>
-                                Genre: {{event.description}}
-                                <br>
-                                <br>
-                                {% video event.video as my_video %}
-                                {% video my_video '600x450' %}
-                                {% endvideo %}<br>
-                                <a href="{% url 'like-post' postid=event.id %}"><i class="fa fa-thumbs-up"></i></a>
-                                &emsp;&emsp;&emsp;
-                                {% if liked %}
-                                Liked
-                                {% endif %}
-                                {% if disliked %}
-                                Disliked
-                                {% endif %}
-                                &emsp;&emsp;&emsp;
-                                <a href="{% url 'dislike-post' postid=event.id %}"><i class="fa fa-thumbs-down"></i></a>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
                 </div>
-
-                <!-- DEAD CODE START -->
-                <div style="display:none">
-                    <!-- Content Row -->
-                    <div class="row">
-
-                        <!-- Content Column -->
-                        <div class="col-lg-6 mb-4">
-
-                            <!-- Project Card Example -->
-
-                            <!-- Color System -->
-                            <div class="row">
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card bg-primary text-white shadow">
-                                        <div class="card-body">
-                                            Primary
-                                            <div class="text-white-50 small">#4e73df</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card bg-success text-white shadow">
-                                        <div class="card-body">
-                                            Success
-                                            <div class="text-white-50 small">#1cc88a</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card bg-info text-white shadow">
-                                        <div class="card-body">
-                                            Info
-                                            <div class="text-white-50 small">#36b9cc</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card bg-warning text-white shadow">
-                                        <div class="card-body">
-                                            Warning
-                                            <div class="text-white-50 small">#f6c23e</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card bg-danger text-white shadow">
-                                        <div class="card-body">
-                                            Danger
-                                            <div class="text-white-50 small">#e74a3b</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card bg-secondary text-white shadow">
-                                        <div class="card-body">
-                                            Secondary
-                                            <div class="text-white-50 small">#858796</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- DEAD CODE END -->
+                <!-- /.container-fluid -->
             </div>
-            <!-- /.container-fluid -->
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; GigFinder 2020</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+
         </div>
-        <!-- End of Main Content -->
-
-        <!-- Footer -->
-        <footer class="sticky-footer bg-white">
-            <div class="container my-auto">
-                <div class="copyright text-center my-auto">
-                    <span>Copyright &copy; GigFinder 2020</span>
-                </div>
-            </div>
-        </footer>
-        <!-- End of Footer -->
+        <!-- End of Content Wrapper -->
 
     </div>
-    <!-- End of Content Wrapper -->
+    <!-- End of Page Wrapper -->
 
-</div>
-<!-- End of Page Wrapper -->
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
 
-<!-- Scroll to Top Button-->
-<a class="scroll-to-top rounded" href="#page-top">
-    <i class="fas fa-angle-up"></i>
-</a>
-
-<!-- Logout Modal-->
-<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                <a class="btn btn-primary" href="{% url 'logout' %}">Logout</a>
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="{% url 'logout' %}">Logout</a>
+                </div>
             </div>
         </div>
     </div>
@@ -456,6 +306,8 @@
 $(function() {
   bs_input_file();
 });
+
+
 
 
 

@@ -39,14 +39,12 @@ urlpatterns = [
     path('change-gender/', views.change_gender, name='change-gender'),
     path('change-name/', views.change_name, name='change-name'),
 
-    # path('home/search-bands/search-bands.html', views.search_bands, name='search-bands'),
     path('home/search.html', views.search, name='search'),
     path('home/search/method="POST"', views.search, name='search1'),
     path('home/notifications/', views.view_notifications, name='view-notifications'),
 
-    path('events/', views.allEvents, name='event-page'),
+    path('events/', views.new_gigs, name='event-page'),
     url(r'^events/(?P<id>\d+)/$', views.eventPage, name='event-description'),
-    url(r'^events/(?P<eventid>\d+)/add-to-calendar/$', views.add_to_calendar, name='add-to-cal'),
     url(r'^events/request-performance/(?P<eventid>\d+)/$', views.perform, name='request-performance'),
     url(r'^events/(?P<eventId>\d+)/accept-performer-request/(?P<perfId>\d+)/$', views.acceptPerformer,
         name='accept-performer-request'),

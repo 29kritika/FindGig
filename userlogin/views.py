@@ -1,27 +1,17 @@
 import os
 import pickle
-
 import pytz
 from django.db.models import Q, Count
 from django.shortcuts import render, redirect
 from google.auth.transport.requests import Request
-
 from .models import *
 from .forms import *
 from django.http import Http404
 from FindGig.settings import STATICFILES_DIRS
 from notifications.signals import notify
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics import euclidean_distances
-import pandas as pd
-import numpy as np
-import httplib2
-from oauth2client.service_account import ServiceAccountCredentials
 from googleapiclient.discovery import build
-from httplib2 import Http
-from oauth2client import file, client, tools
 from google_auth_oauthlib.flow import InstalledAppFlow
-from datetime import datetime, timedelta
+from datetime import datetime
 
 
 def create_event(event):
@@ -45,7 +35,6 @@ def create_event(event):
     end_datetime = datetime.now(tz=pytz.timezone('Asia/Kolkata'))
     start_datetime = start_datetime.replace(year=event.date.year, month=event.date.month, day=event.date.day, hour=event.startTime.hour,
                            minute=event.startTime.minute)
-    print(start_datetime)
     end_datetime = end_datetime.replace(year=event.date.year, month=event.date.month, day=event.date.day, hour=event.endTime.hour,
                          minute=event.endTime.minute)
     body = {
@@ -55,7 +44,6 @@ def create_event(event):
         'end': {'dateTime': end_datetime.isoformat()},
     }
     cal_event = service.events().insert(calendarId='primary', body=body).execute()
-    print(f"The event has been created! View it at {cal_event.get('htmlLink')}!")
     return cal_event.get('htmlLink')
 
 
@@ -66,8 +54,8 @@ def index(request):
     return render(request, 'index.html')
 
 
-def checkArtist(user):
-    if user.type == 'artist':
+def checkArtistOrBand(user):
+    if user.type == 'artist' or user.type == 'band':
         return
     raise Http404('not allowed ')
 
@@ -83,8 +71,6 @@ def get_posts(user, givenposts):
     disliked_posts = RatedPost.objects.filter(liked=False, viewer=user)
     posts = []
     for post in givenposts:
-        print(liked_posts)
-        print(disliked_posts)
         if liked_posts.filter(posts=post).count() == 0:
             liked = False
         else:
@@ -102,7 +88,8 @@ def homePage(request):
     try:
         user = User.objects.get(user=socialUser)
     except:
-        return redirect('Signup')
+        if type(socialUser) != 'AnonymousUser':
+            return redirect('Signup')
     args = {'user': user, }
     posts = Post.objects.all()
     args['posts'] = get_posts(user, posts)
@@ -136,8 +123,6 @@ def homePage(request):
                     video=event.video,
                 )
                 return redirect('Home')
-            else:
-                print("why dude")
         else:
             form = PostCreationForm()
         args['form'] = form
@@ -159,8 +144,6 @@ def homePage(request):
                 calendar_link=link
             )
             return redirect('Home')
-        else:
-            print("why dude")
     else:
         form = EventCreationForm()
     args['form'] = form
@@ -179,8 +162,6 @@ def signUp(request):
                 name=user.name
             )
             return redirect('/')
-        else:
-            print("why dude")
     else:
         form = CustomUserCreationForm
     arg = {'form': form}
@@ -215,7 +196,6 @@ def new_gigs(request):
     socialUser = request.user
     user = User.objects.get(user=socialUser)
     events = Event.objects.all()
-    print('events:', events)
     args = {'user': user, 'events': events}
     return render(request, 'newgigs.html', args)
 
@@ -236,9 +216,7 @@ def sponsor(request, eventid):
             verb = user.name + " wishes to sponsor your event " + event.title + "\nAmount: Rs." + str(sponsor.Amount)
             recipient = event.organiser.user
             notify.send(user, recipient=recipient, verb=verb, target=event)
-            return redirect('/')
-        else:
-            print("why dude")
+            return redirect('Home')
     else:
         form = SponsorForm
     arg = {'form': form}
@@ -248,6 +226,7 @@ def sponsor(request, eventid):
 def perform(request, eventid):
     socialUser = request.user
     user = User.objects.get(user=socialUser)
+    checkArtistOrBand(user)
     event = Event.objects.get(id=eventid)
     Performer.objects.update_or_create(
         performer=user,
@@ -271,8 +250,6 @@ def change_bio(request):
             user.about_link = bio.about_link
             user.save()
             return redirect('Home')
-        else:
-            print("why dude")
     else:
         form = Bio()
     arg = {'form': form, }
@@ -289,8 +266,6 @@ def change_name(request):
             user.name = name.name
             user.save()
             return redirect('Home')
-        else:
-            print("why dude")
     else:
         form = Name()
     arg = {'form': form, }
@@ -307,8 +282,6 @@ def change_city(request):
             user.city = city.city
             user.save()
             return redirect('Home')
-        else:
-            print("why dude")
     else:
         form = City()
     arg = {'form': form, }
@@ -325,8 +298,6 @@ def change_gender(request):
             user.gender = name.gender
             user.save()
             return redirect('Home')
-        else:
-            print("why dude")
     else:
         form = Gender()
     arg = {'form': form, }
@@ -340,7 +311,6 @@ def eventPage(request, id):
     sponsors = Sponsor.objects.all().filter(Event=event)
     performers = Performer.objects.all().filter(event=event, request_accepted=True)
     performer_reqs = Performer.objects.all().filter(event=event, responded=False)
-    print(performers)
     check_sponsor = True
     for s in sponsors:
         if s.sponsor == user:
@@ -356,12 +326,8 @@ def eventPage(request, id):
         check_sponsor = False
         check_performer = False
         user_is_org = True
-    print(performer_reqs)
-    for req in performer_reqs:
-        print(req.performer.id)
-        print(req.event.id)
     args = {'event': event, 'sponsors': sponsors, 'check_sponsor': check_sponsor, 'check_performer': check_performer,
-            'performers': performers, 'user_is_org': user_is_org, 'performer_reqs': performer_reqs, 'user':user}
+            'performers': performers, 'user_is_org': user_is_org, 'performer_reqs': performer_reqs, 'user': user}
     return render(request, 'events/AboutEvent.html', args)
 
 
@@ -380,7 +346,6 @@ def search(request):
         ).distinct()
         for qq in qe:
             queryset.append(qq)
-            print(qq)
     user = User.objects.get(user=request.user)
     args = {'search_set': list(set(queryset)), 'user': user}
     return render(request, 'searchresult.html', args)
@@ -391,7 +356,7 @@ def view_notifications(request):
     list1 = socialUser.notifications.unread()
     list2 = socialUser.notifications.read()
     list1.mark_all_as_read()
-    args = {'notifs_unread': list1, 'notifs_read': list2}
+    args = {'notifs_read': list2, }
     return render(request, 'notif.html', args)
 
 
@@ -399,12 +364,9 @@ def acceptPerformer(request, eventId, perfId):
     socialUser = request.user
     user = User.objects.get(user=socialUser)
     event = Event.objects.get(id=eventId)
-    print('event;', event)
     performer_user = User.objects.get(id=perfId)
-    print('performer_user:', performer_user)
     if event.organiser != user:
         raise Http404('You are not authenticated to make changes to this event')
-    print('in accept ')
     p = Performer.objects.filter(event=event, performer=performer_user)
     for performer in p:
         performer.request_accepted = True
@@ -412,11 +374,6 @@ def acceptPerformer(request, eventId, perfId):
         performer.save()
         verb = 'Your request to perform at ' + event.title + 'has been accepted'
         notify.send(user, recipient=performer.performer.user, verb=verb, target=event)
-
-    for perf in p:
-        print(perf.event.title)
-        print(perf.performer.name)
-        print(perf.request_accepted)
     return redirect('view-notifications')
 
 
@@ -439,21 +396,19 @@ def declinePerformer(request, eventId, perfId):
 
 def related_post(user):
     rp = list(RatedPost.objects.all().filter(viewer=user, liked=True).values('posts__description'))
-    print(rp)
     nl_rp = list(RatedPost.objects.all().filter(viewer=user, liked=False).values('posts__description'))
     queryset = []
-    lw=[]
-    ulw=[]
+    lw = []
+    ulw = []
     for i in rp:
         lw.extend(i['posts__description'].split(" "))
-    lw=list(set(lw))
+    lw = list(set(lw))
     for i in nl_rp:
         ulw.extend(i['posts__description'].split(" "))
-    ulw=list(set(ulw))
-
+    ulw = list(set(ulw))
     for q in lw:
         if q not in ulw:
-            qe = Post.objects.all()
+            qe = Post.objects.all().exclude(performer=user)
             qe = qe.filter(
                 Q(description__icontains=q) |
                 Q(performer__about_text__icontains=q) |
@@ -461,8 +416,7 @@ def related_post(user):
             ).distinct()
             for qq in qe:
                 queryset.append(qq)
-                print(qq)
-    queryset=list(set(queryset))
+    queryset = list(set(queryset))
     return queryset
 
 
@@ -498,13 +452,3 @@ def dislike_post(request, postid):
             posts=post
         )
     return redirect('Home')
-
-
-def add_to_calendar(request, eventid):
-    event = Event.objects.get(id=eventid)
-    create_event(event)
-    return redirect('Home')
-
-
-def allEvents(request):
-    pass
